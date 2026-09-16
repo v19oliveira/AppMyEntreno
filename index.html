@@ -1,2269 +1,3220 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AppMyEntreno</title>
 
-  <meta name="theme-color" content="#111827">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Mi Entreno">
+<style>
+:root{
+    --bg:#f5f6f8;
+    --card:#ffffff;
+    --text:#20242b;
+    --muted:#737985;
+    --border:#e4e6eb;
+    --accent:#111827;
+    --accent-soft:#eef0f3;
+    --success:#16803c;
+    --warning:#a16207;
+    --danger:#b42318;
+    --shadow:0 8px 25px rgba(0,0,0,.06);
+    --radius:18px;
+}
 
-  <meta name="description"
-        content="Panel personal de entrenamiento y carrera">
+*{
+    box-sizing:border-box;
+}
 
-  <title>Mi Entreno</title>
+html{
+    scroll-behavior:smooth;
+}
 
-  <style>
+body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+}
 
-    :root {
-      --bg: #f3f4f6;
-      --card: #ffffff;
-      --text: #111827;
-      --muted: #6b7280;
-      --line: #e5e7eb;
-      --accent: #111827;
-      --soft: #f9fafb;
-      --success: #166534;
-      --success-bg: #dcfce7;
-      --warning: #92400e;
-      --warning-bg: #fef3c7;
-      --danger: #991b1b;
-      --danger-bg: #fee2e2;
-      --radius: 18px;
+button,
+input,
+select,
+textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.app{
+    min-height:100vh;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:rgba(255,255,255,.94);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);
+}
+
+.header-inner{
+    max-width:1200px;
+    margin:auto;
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+}
+
+.logo{
+    font-weight:800;
+    font-size:20px;
+    letter-spacing:-.5px;
+}
+
+.logo span{
+    color:var(--muted);
+    font-weight:500;
+}
+
+nav{
+    display:flex;
+    gap:6px;
+    overflow-x:auto;
+}
+
+nav button{
+    border:0;
+    background:transparent;
+    padding:9px 12px;
+    border-radius:10px;
+    color:var(--muted);
+    white-space:nowrap;
+}
+
+nav button:hover,
+nav button.active{
+    background:var(--accent-soft);
+    color:var(--text);
+}
+
+/* =========================
+   MAIN
+========================= */
+
+main{
+    max-width:1200px;
+    margin:auto;
+    padding:30px 20px 70px;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+.page-header{
+    margin-bottom:24px;
+}
+
+.page-header h1{
+    margin:0 0 6px;
+    font-size:32px;
+    letter-spacing:-1px;
+}
+
+.page-header p{
+    margin:0;
+    color:var(--muted);
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.grid{
+    display:grid;
+    gap:16px;
+}
+
+.grid-2{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+.grid-3{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+}
+
+.grid-4{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;
+    box-shadow:var(--shadow);
+}
+
+.card h2,
+.card h3{
+    margin-top:0;
+}
+
+.stat{
+    min-height:125px;
+}
+
+.stat-label{
+    color:var(--muted);
+    font-size:14px;
+    margin-bottom:8px;
+}
+
+.stat-value{
+    font-size:30px;
+    font-weight:800;
+    letter-spacing:-1px;
+}
+
+.stat-small{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:5px;
+}
+
+/* =========================
+   BADGES
+========================= */
+
+.badge{
+    display:inline-flex;
+    align-items:center;
+    padding:5px 9px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:700;
+    background:var(--accent-soft);
+}
+
+.badge.success{
+    color:var(--success);
+}
+
+.badge.warning{
+    color:var(--warning);
+}
+
+.badge.danger{
+    color:var(--danger);
+}
+
+/* =========================
+   FORMS
+========================= */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.form-group.full{
+    grid-column:1/-1;
+}
+
+label{
+    font-size:13px;
+    font-weight:700;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    border:1px solid var(--border);
+    border-radius:11px;
+    padding:11px 12px;
+    background:#fff;
+    color:var(--text);
+    outline:none;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:#9ca3af;
+}
+
+textarea{
+    min-height:90px;
+    resize:vertical;
+}
+
+.btn{
+    border:0;
+    border-radius:11px;
+    padding:11px 16px;
+    font-weight:700;
+}
+
+.btn-primary{
+    background:var(--accent);
+    color:white;
+}
+
+.btn-secondary{
+    background:var(--accent-soft);
+    color:var(--text);
+}
+
+.btn-danger{
+    background:#fee2e2;
+    color:var(--danger);
+}
+
+.actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:16px;
+}
+
+/* =========================
+   EXERCISE CARDS
+========================= */
+
+.exercise-list{
+    display:grid;
+    gap:10px;
+}
+
+.exercise{
+    border:1px solid var(--border);
+    border-radius:13px;
+    padding:13px 14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+}
+
+.exercise-name{
+    font-weight:700;
+}
+
+.exercise-meta{
+    color:var(--muted);
+    font-size:13px;
+    text-align:right;
+}
+
+.exercise-note{
+    margin-top:5px;
+    color:var(--muted);
+    font-size:12px;
+}
+
+/* =========================
+   WEEK PLAN
+========================= */
+
+.week{
+    border:1px solid var(--border);
+    border-radius:15px;
+    overflow:hidden;
+    margin-bottom:15px;
+}
+
+.week-header{
+    background:var(--accent-soft);
+    padding:13px 15px;
+    font-weight:800;
+}
+
+.week-body{
+    padding:15px;
+}
+
+.week-item{
+    display:flex;
+    justify-content:space-between;
+    padding:9px 0;
+    border-bottom:1px solid var(--border);
+    gap:20px;
+}
+
+.week-item:last-child{
+    border-bottom:0;
+}
+
+.day{
+    font-weight:700;
+}
+
+.session{
+    color:var(--muted);
+    text-align:right;
+}
+
+/* =========================
+   INFO BOX
+========================= */
+
+.info{
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:15px;
+    background:#fafafa;
+    margin-bottom:16px;
+}
+
+.info strong{
+    display:block;
+    margin-bottom:5px;
+}
+
+.info.warning{
+    background:#fffbeb;
+}
+
+.info.danger{
+    background:#fef2f2;
+}
+
+/* =========================
+   HISTORY
+========================= */
+
+.history-item{
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:15px;
+    margin-bottom:10px;
+}
+
+.history-top{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:8px;
+}
+
+.history-title{
+    font-weight:800;
+}
+
+.history-meta{
+    color:var(--muted);
+    font-size:13px;
+}
+
+.history-notes{
+    margin-top:8px;
+    white-space:pre-wrap;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.table-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:650px;
+}
+
+th,
+td{
+    padding:11px;
+    border-bottom:1px solid var(--border);
+    text-align:left;
+    font-size:13px;
+}
+
+th{
+    color:var(--muted);
+    font-weight:700;
+}
+
+/* =========================
+   PROGRESS
+========================= */
+
+.progress-bar{
+    height:10px;
+    border-radius:999px;
+    background:var(--accent-soft);
+    overflow:hidden;
+}
+
+.progress-fill{
+    height:100%;
+    background:var(--accent);
+    width:0%;
+    transition:.3s;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+    color:var(--muted);
+    text-align:center;
+    font-size:12px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:800px){
+
+    .header-inner{
+        flex-direction:column;
+        align-items:flex-start;
     }
 
-    * {
-      box-sizing: border-box;
+    nav{
+        width:100%;
     }
 
-    html {
-      background: var(--bg);
-      -webkit-text-size-adjust: 100%;
+    .grid-2,
+    .grid-3,
+    .grid-4,
+    .form-grid{
+        grid-template-columns:1fr;
     }
 
-    body {
-      margin: 0;
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "SF Pro Display",
-        "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
-        sans-serif;
-
-      color: var(--text);
-      background: var(--bg);
-
-      min-height: 100vh;
-
-      padding-bottom:
-        calc(28px + env(safe-area-inset-bottom));
+    .page-header h1{
+        font-size:27px;
     }
 
-    button,
-    input,
-    textarea,
-    select {
-      font: inherit;
+    main{
+        padding:22px 14px 60px;
     }
 
-    button {
-      -webkit-tap-highlight-color: transparent;
+    .card{
+        padding:16px;
     }
 
-    .app {
-      width: min(100%, 720px);
-      margin: 0 auto;
-
-      padding:
-        max(18px, env(safe-area-inset-top))
-        16px
-        24px;
+    .exercise{
+        align-items:flex-start;
     }
-
-    header {
-      padding: 8px 2px 16px;
-    }
-
-    .eyebrow {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-
-      margin-bottom: 5px;
-    }
-
-    h1 {
-      margin: 0;
-
-      font-size: 30px;
-      line-height: 1.1;
-      letter-spacing: -.03em;
-    }
-
-    .date {
-      margin-top: 6px;
-
-      color: var(--muted);
-      font-size: 14px;
-
-      text-transform: capitalize;
-    }
-
-    /* -----------------------------
-       WEEK NAVIGATION
-    ----------------------------- */
-
-    .week-nav {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-
-      gap: 7px;
-
-      margin: 4px 0 16px;
-    }
-
-    .day-btn {
-      border: 1px solid var(--line);
-
-      background: var(--card);
-      color: var(--muted);
-
-      border-radius: 13px;
-
-      padding: 9px 3px;
-
-      cursor: pointer;
-
-      font-weight: 700;
-      font-size: 13px;
-    }
-
-    .day-btn.active {
-      background: var(--accent);
-      color: white;
-
-      border-color: var(--accent);
-    }
-
-    .day-btn.today::after {
-      content: "";
-
-      display: block;
-
-      width: 4px;
-      height: 4px;
-
-      border-radius: 50%;
-
-      background: currentColor;
-
-      margin: 5px auto 0;
-    }
-
-    /* -----------------------------
-       CARDS
-    ----------------------------- */
-
-    .card {
-      background: var(--card);
-
-      border: 1px solid var(--line);
-
-      border-radius: var(--radius);
-
-      padding: 18px;
-
-      margin-bottom: 14px;
-
-      box-shadow:
-        0 2px 10px rgba(17,24,39,.035);
-    }
-
-    .hero {
-      color: white;
-
-      background: #111827;
-
-      border-color: #111827;
-    }
-
-    .hero .muted,
-    .hero .eyebrow {
-      color: #c7ccd5;
-    }
-
-    /* -----------------------------
-       SESSION HEADER
-    ----------------------------- */
-
-    .session-top {
-      display: flex;
-
-      align-items: flex-start;
-
-      justify-content: space-between;
-
-      gap: 12px;
-    }
-
-    .session-type {
-      font-size: 12px;
-
-      font-weight: 800;
-
-      letter-spacing: .07em;
-
-      text-transform: uppercase;
-
-      opacity: .72;
-
-      margin-bottom: 5px;
-    }
-
-    .session-title {
-      font-size: 24px;
-
-      font-weight: 800;
-
-      line-height: 1.15;
-
-      letter-spacing: -.02em;
-    }
-
-    .duration {
-      white-space: nowrap;
-
-      font-size: 13px;
-
-      padding: 7px 9px;
-
-      border-radius: 10px;
-
-      background: rgba(255,255,255,.1);
-    }
-
-    .objective {
-      margin-top: 13px;
-
-      color: #e5e7eb;
-
-      font-size: 14px;
-
-      line-height: 1.45;
-    }
-
-    /* -----------------------------
-       PROGRESS
-    ----------------------------- */
-
-    .progress-wrap {
-      margin-top: 15px;
-    }
-
-    .progress-label {
-      display: flex;
-
-      justify-content: space-between;
-
-      color: #d1d5db;
-
-      font-size: 12px;
-
-      margin-bottom: 7px;
-    }
-
-    .progress-track {
-      height: 7px;
-
-      background: rgba(255,255,255,.15);
-
-      border-radius: 99px;
-
-      overflow: hidden;
-    }
-
-    .progress-bar {
-      height: 100%;
-
-      width: 0;
-
-      background: white;
-
-      border-radius: inherit;
-
-      transition: width .25s ease;
-    }
-
-    /* -----------------------------
-       TITLES
-    ----------------------------- */
-
-    .section-title {
-      margin: 0 0 12px;
-
-      font-size: 17px;
-
-      font-weight: 800;
-
-      letter-spacing: -.015em;
-    }
-
-    .section-subtitle {
-      color: var(--muted);
-
-      font-size: 13px;
-
-      margin-top: -6px;
-
-      margin-bottom: 13px;
-    }
-
-    /* -----------------------------
-       EXERCISES
-    ----------------------------- */
-
-    .exercise {
-      display: flex;
-
-      align-items: flex-start;
-
-      gap: 12px;
-
-      padding: 12px 0;
-
-      border-bottom: 1px solid var(--line);
-    }
-
-    .exercise:last-child {
-      border-bottom: 0;
-
-      padding-bottom: 2px;
-    }
-
-    .check {
-      appearance: none;
-      -webkit-appearance: none;
-
-      flex: 0 0 24px;
-
-      width: 24px;
-      height: 24px;
-
-      margin: 0;
-
-      border: 1.5px solid #9ca3af;
-
-      border-radius: 7px;
-
-      background: white;
-
-      cursor: pointer;
-
-      position: relative;
-    }
-
-    .check:checked {
-      background: var(--accent);
-
-      border-color: var(--accent);
-    }
-
-    .check:checked::after {
-      content: "✓";
-
-      position: absolute;
-
-      color: white;
-
-      font-size: 16px;
-
-      font-weight: 800;
-
-      left: 4px;
-      top: 0;
-    }
-
-    .exercise.done .exercise-name {
-      text-decoration: line-through;
-
-      color: var(--muted);
-    }
-
-    .exercise-name {
-      font-size: 14px;
-
-      font-weight: 700;
-
-      line-height: 1.35;
-    }
-
-    .exercise-detail {
-      color: var(--muted);
-
-      font-size: 13px;
-
-      line-height: 1.35;
-
-      margin-top: 3px;
-    }
-
-    /* -----------------------------
-       STATS
-    ----------------------------- */
-
-    .stats {
-      display: grid;
-
-      grid-template-columns: repeat(3, 1fr);
-
-      gap: 9px;
-    }
-
-    .stat {
-      background: var(--soft);
-
-      border: 1px solid var(--line);
-
-      border-radius: 14px;
-
-      padding: 13px 10px;
-
-      min-width: 0;
-    }
-
-    .stat-value {
-      font-size: 22px;
-
-      font-weight: 850;
-
-      letter-spacing: -.03em;
-    }
-
-    .stat-label {
-      color: var(--muted);
-
-      font-size: 11px;
-
-      margin-top: 2px;
-
-      line-height: 1.25;
-    }
-
-    /* -----------------------------
-       RUN FORM
-    ----------------------------- */
-
-    .run-grid {
-      display: grid;
-
-      grid-template-columns: 1fr 1fr;
-
-      gap: 10px;
-    }
-
-    label {
-      display: block;
-
-      color: var(--muted);
-
-      font-size: 12px;
-
-      font-weight: 700;
-
-      margin-bottom: 6px;
-    }
-
-    input,
-    textarea,
-    select {
-      width: 100%;
-
-      border: 1px solid var(--line);
-
-      border-radius: 12px;
-
-      background: white;
-
-      color: var(--text);
-
-      padding: 11px 12px;
-
-      outline: none;
-    }
-
-    input:focus,
-    textarea:focus,
-    select:focus {
-      border-color: #6b7280;
-
-      box-shadow:
-        0 0 0 3px rgba(107,128,128,.12);
-    }
-
-    textarea {
-      resize: vertical;
-
-      min-height: 76px;
-    }
-
-    /* -----------------------------
-       BUTTONS
-    ----------------------------- */
-
-    .btn {
-      border: 0;
-
-      border-radius: 12px;
-
-      padding: 11px 14px;
-
-      cursor: pointer;
-
-      font-weight: 800;
-
-      background: var(--accent);
-
-      color: white;
-    }
-
-    .btn.secondary {
-      background: var(--soft);
-
-      color: var(--text);
-
-      border: 1px solid var(--line);
-    }
-
-    .btn.danger {
-      background: var(--danger-bg);
-
-      color: var(--danger);
-    }
-
-    .full {
-      width: 100%;
-
-      margin-top: 10px;
-    }
-
-    /* -----------------------------
-       NOTICES
-    ----------------------------- */
-
-    .notice {
-      border-radius: 14px;
-
-      padding: 13px 14px;
-
-      background: var(--warning-bg);
-
-      color: var(--warning);
-
-      font-size: 13px;
-
-      line-height: 1.45;
-    }
-
-    .notice strong {
-      display: block;
-
-      margin-bottom: 3px;
-    }
-
-    /* -----------------------------
-       RUN HISTORY
-    ----------------------------- */
-
-    .run-list {
-      display: grid;
-
-      gap: 8px;
-
-      margin-top: 12px;
-    }
-
-    .run-item {
-      display: flex;
-
-      justify-content: space-between;
-
-      gap: 12px;
-
-      padding: 11px 12px;
-
-      border-radius: 12px;
-
-      background: var(--soft);
-
-      border: 1px solid var(--line);
-
-      font-size: 13px;
-    }
-
-    .run-main {
-      font-weight: 750;
-    }
-
-    .run-date {
-      color: var(--muted);
-
-      font-size: 11px;
-
-      margin-top: 2px;
-    }
-
-    .run-metric {
-      text-align: right;
-
-      white-space: nowrap;
-
-      font-weight: 800;
-    }
-
-    .run-pace {
-      color: var(--muted);
-
-      font-size: 11px;
-
-      font-weight: 600;
-
-      margin-top: 2px;
-    }
-
-    .empty {
-      color: var(--muted);
-
-      font-size: 13px;
-
-      text-align: center;
-
-      padding: 10px 0 2px;
-    }
-
-    /* -----------------------------
-       FOOTER
-    ----------------------------- */
-
-    .footer {
-      color: var(--muted);
-
-      font-size: 11px;
-
-      text-align: center;
-
-      line-height: 1.45;
-
-      padding: 5px 12px 15px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    @media (max-width: 380px) {
-
-      .app {
-        padding-left: 12px;
-        padding-right: 12px;
-      }
-
-      .card {
-        padding: 15px;
-      }
-
-      .session-title {
-        font-size: 21px;
-      }
-
-      .stats {
-        gap: 6px;
-      }
-
-      .stat {
-        padding: 11px 8px;
-      }
-
-      .stat-value {
-        font-size: 19px;
-      }
-    }
-
-  </style>
+}
+</style>
 </head>
 
 <body>
 
-<main class="app">
+<div class="app">
 
-  <header>
+<header>
+    <div class="header-inner">
 
-    <div class="eyebrow">
-      Panel personal
-    </div>
-
-    <h1>
-      Mi Entreno
-    </h1>
-
-    <div
-      class="date"
-      id="todayDate">
-    </div>
-
-  </header>
-
-
-  <!-- =========================
-       WEEK NAVIGATION
-  ========================== -->
-
-  <nav
-    class="week-nav"
-    id="weekNav"
-    aria-label="Días de la semana">
-  </nav>
-
-
-  <!-- =========================
-       CURRENT SESSION
-  ========================== -->
-
-  <section class="card hero">
-
-    <div class="session-top">
-
-      <div>
-
-        <div
-          class="session-type"
-          id="sessionType">
+        <div class="logo">
+            AppMyEntreno <span>2.0</span>
         </div>
 
-        <div
-          class="session-title"
-          id="sessionTitle">
+        <nav>
+
+            <button class="nav-btn active" data-page="inicio">
+                Inicio
+            </button>
+
+            <button class="nav-btn" data-page="running">
+                Running
+            </button>
+
+            <button class="nav-btn" data-page="fuerza">
+                Fuerza
+            </button>
+
+            <button class="nav-btn" data-page="movilidad">
+                Movilidad
+            </button>
+
+            <button class="nav-btn" data-page="dieta">
+                Dieta
+            </button>
+
+            <button class="nav-btn" data-page="progreso">
+                Progreso
+            </button>
+
+            <button class="nav-btn" data-page="historial">
+                Historial
+            </button>
+
+        </nav>
+
+    </div>
+</header>
+
+
+<main>
+
+<!-- =====================================================
+     INICIO
+===================================================== -->
+
+<section id="inicio" class="page active">
+
+    <div class="page-header">
+        <h1>Mi entrenamiento</h1>
+        <p>Running + fuerza + movilidad + control de progreso</p>
+    </div>
+
+
+    <div class="grid grid-4">
+
+        <div class="card stat">
+            <div class="stat-label">Peso actual</div>
+            <div class="stat-value" id="homeWeight">—</div>
+            <div class="stat-small">kg</div>
         </div>
 
-      </div>
-
-      <div
-        class="duration"
-        id="sessionDuration">
-      </div>
-
-    </div>
-
-
-    <div
-      class="objective"
-      id="sessionObjective">
-    </div>
-
-
-    <div class="progress-wrap">
-
-      <div class="progress-label">
-
-        <span>
-          Progreso de la sesión
-        </span>
-
-        <span id="progressText">
-          0%
-        </span>
-
-      </div>
-
-      <div class="progress-track">
-
-        <div
-          class="progress-bar"
-          id="progressBar">
+        <div class="card stat">
+            <div class="stat-label">% grasa</div>
+            <div class="stat-value" id="homeBodyFat">—</div>
+            <div class="stat-small">última medición</div>
         </div>
 
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       EXERCISES
-  ========================== -->
-
-  <section class="card">
-
-    <h2 class="section-title">
-      Sesión de hoy
-    </h2>
-
-    <div id="exerciseList">
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       RUNNING
-  ========================== -->
-
-  <section
-    class="card"
-    id="runningCard">
-
-    <h2 class="section-title">
-      Registrar carrera
-    </h2>
-
-    <div class="section-subtitle">
-      Guarda tus datos y consulta después la evolución.
-    </div>
-
-
-    <div class="run-grid">
-
-      <div>
-
-        <label for="runKm">
-          Distancia (km)
-        </label>
-
-        <input
-          id="runKm"
-          type="number"
-          inputmode="decimal"
-          min="0"
-          step="0.1"
-          placeholder="Ej. 6.2">
-
-      </div>
-
-
-      <div>
-
-        <label for="runPace">
-          Ritmo (min/km)
-        </label>
-
-        <input
-          id="runPace"
-          type="text"
-          inputmode="decimal"
-          placeholder="Ej. 6:45">
-
-      </div>
-
-    </div>
-
-
-    <div style="margin-top:10px">
-
-      <label for="runRpe">
-        RPE
-      </label>
-
-      <select id="runRpe">
-
-        <option value="">
-          Sin registrar
-        </option>
-
-        <option>5</option>
-        <option>6</option>
-        <option>7</option>
-        <option>8</option>
-        <option>9</option>
-        <option>10</option>
-
-      </select>
-
-    </div>
-
-
-    <button
-      class="btn full"
-      id="saveRun">
-
-      Guardar carrera
-
-    </button>
-
-
-    <div
-      id="runMessage"
-      class="section-subtitle hidden"
-      style="margin:10px 0 0;text-align:center">
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       WEEKLY SUMMARY
-  ========================== -->
-
-  <section class="card">
-
-    <h2 class="section-title">
-      Resumen semanal
-    </h2>
-
-    <div class="stats">
-
-      <div class="stat">
-
-        <div
-          class="stat-value"
-          id="runCount">
-          0
+        <div class="card stat">
+            <div class="stat-label">Cintura</div>
+            <div class="stat-value" id="homeWaist">—</div>
+            <div class="stat-small">cm</div>
         </div>
 
-        <div class="stat-label">
-          carreras
+        <div class="card stat">
+            <div class="stat-label">Entrenamientos</div>
+            <div class="stat-value" id="homeWorkouts">0</div>
+            <div class="stat-small">registrados</div>
         </div>
 
-      </div>
+    </div>
 
 
-      <div class="stat">
+    <br>
 
-        <div
-          class="stat-value"
-          id="weeklyKm">
-          0.0
+
+    <div class="grid grid-2">
+
+        <div class="card">
+
+            <h2>Objetivo actual</h2>
+
+            <p>
+                Mejorar progresivamente el ritmo de carrera,
+                manteniendo fuerza y masa muscular mientras se
+                controla la carga y se protege la recuperación.
+            </p>
+
+            <div class="info">
+                <strong>Objetivo running</strong>
+                6:45 → 5:30 min/km en 12 semanas.
+            </div>
+
+            <div class="info">
+                <strong>Planificación</strong>
+                Garmin Coach gestiona las sesiones de carrera.
+                AppMyEntreno gestiona la integración con fuerza,
+                movilidad, recuperación y seguimiento.
+            </div>
+
         </div>
 
-        <div class="stat-label">
-          km esta semana
+
+        <div class="card">
+
+            <h2>Próxima revisión</h2>
+
+            <div id="reviewSummary">
+                Aún no hay suficientes registros.
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary"
+                        onclick="showPage('progreso')">
+                    Registrar progreso
+                </button>
+
+                <button class="btn btn-secondary"
+                        onclick="showPage('running')">
+                    Registrar carrera
+                </button>
+            </div>
+
         </div>
 
-      </div>
+    </div>
 
 
-      <div class="stat">
+    <br>
 
-        <div
-          class="stat-value"
-          id="completedCount">
-          0/7
+
+    <div class="card">
+
+        <h2>Regla de control de carga</h2>
+
+        <div class="grid grid-3">
+
+            <div class="info">
+                <strong>0–2/10</strong>
+                Observar evolución.
+            </div>
+
+            <div class="info warning">
+                <strong>3–4/10</strong>
+                Reducir o modificar.
+            </div>
+
+            <div class="info danger">
+                <strong>≥5/10</strong>
+                Parar y reevaluar.
+            </div>
+
         </div>
 
-        <div class="stat-label">
-          días completados
+        <p class="history-meta">
+            Vigilar especialmente dolor que aumente durante la sesión,
+            altere la técnica, persista claramente al día siguiente
+            o aumente semana tras semana.
+        </p>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="card">
+
+        <h2>Protección del bíceps izquierdo</h2>
+
+        <div class="info danger">
+
+            <strong>Prioridad</strong>
+
+            Respetar las indicaciones del traumatólogo y fisioterapeuta.
+            No utilizar el running ni la fuerza de piernas como excusa
+            para probar la tolerancia del tendón.
+
         </div>
 
-      </div>
+        <p>
+            Evitar utilizar el brazo izquierdo como apoyo o carga
+            innecesaria y evitar ejercicios de empuje, tracción,
+            dominadas, fondos, flexiones, burpees o farmer carries
+            mientras no estén autorizados.
+        </p>
 
     </div>
 
-  </section>
+</section>
 
 
-  <!-- =========================
-       CURRENT PHASE RULES
-  ========================== -->
+<!-- =====================================================
+     RUNNING
+===================================================== -->
 
-  <section class="card">
+<section id="running" class="page">
 
-    <h2 class="section-title">
-      Reglas de esta fase
-    </h2>
+    <div class="page-header">
+        <h1>Running</h1>
+        <p>Garmin Coach = planificación de carrera</p>
+    </div>
 
 
-    <div class="notice">
+    <div class="info">
 
-      <strong>
-        Protección del brazo izquierdo
-      </strong>
+        <strong>Objetivo de 12 semanas</strong>
 
-      Mantén la restricción de carga vigente indicada
-      por tu equipo médico. Evita ejercicios que carguen
-      directamente el brazo izquierdo o que generen dolor.
-      Actualiza esta regla cuando cambie tu pauta de
-      rehabilitación.
+        Mejorar progresivamente desde aproximadamente
+        6:45 min/km hacia 5:30 min/km.
+
+        Garmin Coach determina el contenido exacto de cada sesión.
+        Aquí registramos qué ocurrió realmente.
 
     </div>
 
 
-    <div style="height:10px">
+    <div class="card">
+
+        <h2>Registrar carrera</h2>
+
+        <form id="runningForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date" id="runDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Semana del plan</label>
+
+                    <select id="runWeek">
+
+                        <option value="1">Semana 1</option>
+                        <option value="2">Semana 2</option>
+                        <option value="3">Semana 3</option>
+                        <option value="4">Semana 4</option>
+                        <option value="5">Semana 5</option>
+                        <option value="6">Semana 6</option>
+                        <option value="7">Semana 7</option>
+                        <option value="8">Semana 8</option>
+                        <option value="9">Semana 9</option>
+                        <option value="10">Semana 10</option>
+                        <option value="11">Semana 11</option>
+                        <option value="12">Semana 12</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Tipo de sesión</label>
+
+                    <select id="runType">
+
+                        <option>Easy / recuperación</option>
+                        <option>Base</option>
+                        <option>Tempo</option>
+                        <option>Intervalos</option>
+                        <option>Umbral</option>
+                        <option>Progresivo</option>
+                        <option>Long run</option>
+                        <option>Otra</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+                    <label>Duración (min)</label>
+                    <input type="number" id="runDuration" min="0">
+                </div>
+
+
+                <div class="form-group">
+                    <label>Distancia (km)</label>
+                    <input type="number" id="runDistance" min="0" step="0.01">
+                </div>
+
+
+                <div class="form-group">
+                    <label>Ritmo medio (min/km)</label>
+                    <input type="text"
+                           id="runPace"
+                           placeholder="6:45">
+                </div>
+
+
+                <div class="form-group">
+                    <label>FC media (ppm)</label>
+                    <input type="number" id="runHR" min="0">
+                </div>
+
+
+                <div class="form-group">
+                    <label>RPE 1–10</label>
+                    <input type="number"
+                           id="runRPE"
+                           min="1"
+                           max="10">
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Dolor / molestia 0–10</label>
+
+                    <input type="number"
+                           id="runPain"
+                           min="0"
+                           max="10"
+                           value="0">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Localización de la molestia</label>
+
+                    <input type="text"
+                           id="runPainLocation"
+                           placeholder="Aquiles, rodilla, bíceps...">
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>Sensación de recuperación</label>
+
+                    <select id="runRecovery">
+
+                        <option>Muy buena</option>
+                        <option>Buena</option>
+                        <option>Normal</option>
+                        <option>Regular</option>
+                        <option>Mala</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>Notas de Garmin / sesión</label>
+
+                    <textarea id="runNotes"
+                              placeholder="Qué indicó Garmin, sensaciones, terreno, etc."></textarea>
+
+                </div>
+
+            </div>
+
+
+            <div class="actions">
+
+                <button class="btn btn-primary" type="submit">
+                    Guardar carrera
+                </button>
+
+                <button class="btn btn-secondary"
+                        type="button"
+                        onclick="resetRunningForm()">
+                    Limpiar
+                </button>
+
+            </div>
+
+        </form>
+
     </div>
 
 
-    <div
-      class="notice"
-      style="background:var(--soft);color:var(--text)">
+    <br>
 
-      <strong>
-        Objetivo
-      </strong>
 
-      Priorizar definición y pérdida de grasa manteniendo
-      masa muscular, sin convertir esta fase en una etapa
-      de volumen.
+    <div class="card">
+
+        <h2>Antes de correr · 5–7 min</h2>
+
+        <div class="exercise-list">
+
+            <div class="exercise">
+                <div class="exercise-name">Caminata / trote suave</div>
+                <div class="exercise-meta">2–3 min</div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-name">Movilidad de tobillos</div>
+                <div class="exercise-meta">Dinámica</div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-name">Balanceos de piernas</div>
+                <div class="exercise-meta">Dinámicos</div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-name">Elevaciones de rodilla</div>
+                <div class="exercise-meta">Controladas</div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-name">Talones al glúteo</div>
+                <div class="exercise-meta">Controlados</div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-name">Progresiones</div>
+                <div class="exercise-meta">2–3 × 15–20 s</div>
+            </div>
+
+        </div>
+
+        <p class="history-meta">
+            Evitar estiramientos estáticos largos antes de correr.
+        </p>
 
     </div>
 
-  </section>
+
+    <br>
 
 
-  <!-- =========================
-       RUN HISTORY
-  ========================== -->
+    <div class="card">
 
-  <section class="card">
+        <h2>Estructura semanal</h2>
 
-    <h2 class="section-title">
-      Historial de carrera
-    </h2>
+        <div class="week">
 
-    <div id="runHistory">
+            <div class="week-header">
+                Semana tipo
+            </div>
+
+            <div class="week-body">
+
+                <div class="week-item">
+                    <div class="day">Lunes</div>
+                    <div class="session">Garmin Coach · carrera</div>
+                </div>
+
+                <div class="week-item">
+                    <div class="day">Martes</div>
+                    <div class="session">Fuerza A + movilidad</div>
+                </div>
+
+                <div class="week-item">
+                    <div class="day">Miércoles</div>
+                    <div class="session">Garmin Coach · carrera</div>
+                </div>
+
+                <div class="week-item">
+                    <div class="day">Jueves</div>
+                    <div class="session">Fuerza B + movilidad</div>
+                </div>
+
+                <div class="week-item">
+                    <div class="day">Viernes</div>
+                    <div class="session">Garmin Coach · carrera</div>
+                </div>
+
+                <div class="week-item">
+                    <div class="day">Sábado</div>
+                    <div class="session">Movilidad + recuperación</div>
+                </div>
+
+                <div class="week-item">
+                    <div class="day">Domingo</div>
+                    <div class="session">Garmin Coach · carrera</div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <p class="history-meta">
+            La distribución de fuerza se modifica si Garmin coloca
+            sesiones especialmente exigentes.
+        </p>
+
     </div>
 
-    <button
-      class="btn danger full"
-      id="clearHistory">
-
-      Borrar historial
-
-    </button>
-
-  </section>
+</section>
 
 
-  <!-- =========================
-       SESSION NOTES
-  ========================== -->
+<!-- =====================================================
+     FUERZA
+===================================================== -->
 
-  <section class="card">
+<section id="fuerza" class="page">
 
-    <h2 class="section-title">
-      Nota de la sesión
-    </h2>
-
-    <div class="section-subtitle">
-      Se guarda automáticamente en este dispositivo.
+    <div class="page-header">
+        <h1>Fuerza</h1>
+        <p>Complemento del running · 2 sesiones semanales</p>
     </div>
 
-    <textarea
-      id="sessionNote"
-      placeholder="Sensaciones, RPE, molestias, sueño, etc.">
-    </textarea>
 
-    <button
-      class="btn secondary full"
-      id="saveNote">
+    <div class="info danger">
 
-      Guardar nota
+        <strong>Bíceps izquierdo</strong>
 
-    </button>
+        No cargar ni utilizar el brazo izquierdo como apoyo innecesario.
+        Evitar ejercicios de empuje, tracción, flexiones, fondos,
+        dominadas, burpees y farmer carries mientras no estén autorizados.
 
-  </section>
+    </div>
 
 
-  <div class="footer">
+    <div class="grid grid-2">
 
-    Datos guardados localmente en este dispositivo.
-    Esta página no necesita una cuenta ni un servidor
-    para funcionar.
+        <!-- FUERZA A -->
 
-  </div>
+        <div class="card">
+
+            <h2>Fuerza A</h2>
+
+            <p class="history-meta">
+                25–30 minutos · fuerza general + glúteo + gemelo/sóleo + core
+            </p>
+
+            <div class="exercise-list">
+
+                <div class="exercise">
+                    <div>
+                        <div class="exercise-name">Sentadilla</div>
+                    </div>
+                    <div class="exercise-meta">3 × 10–15</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Split squat</div>
+                    <div class="exercise-meta">3 × 8–12 / pierna</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Puente de glúteos</div>
+                    <div class="exercise-meta">3 × 12–15</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Elevación de gemelos</div>
+                    <div class="exercise-meta">3 × 15–20</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Tibialis raises</div>
+                    <div class="exercise-meta">3 × 15–20</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Dead bug</div>
+                    <div class="exercise-meta">3 × 8–10 / lado</div>
+                </div>
+
+            </div>
+
+            <div class="actions">
+
+                <button class="btn btn-secondary"
+                        onclick="selectStrength('Fuerza A')">
+                    Registrar sesión
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- FUERZA B -->
+
+        <div class="card">
+
+            <h2>Fuerza B</h2>
+
+            <p class="history-meta">
+                20–25 minutos · unilateral + estabilidad + economía de carrera
+            </p>
+
+            <div class="exercise-list">
+
+                <div class="exercise">
+                    <div class="exercise-name">Reverse lunge</div>
+                    <div class="exercise-meta">3 × 8–12 / pierna</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Step-up</div>
+                    <div class="exercise-meta">3 × 8–12 / pierna</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Single-leg glute bridge</div>
+                    <div class="exercise-meta">3 × 10 / pierna</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Gemelo unilateral</div>
+                    <div class="exercise-meta">3 × 12–15 / pierna</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Equilibrio monopodal</div>
+                    <div class="exercise-meta">2 × 30–45 s / pierna</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Core sin cargar brazo izquierdo</div>
+                    <div class="exercise-meta">3 series</div>
+                </div>
+
+            </div>
+
+            <div class="actions">
+
+                <button class="btn btn-secondary"
+                        onclick="selectStrength('Fuerza B')">
+                    Registrar sesión
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="card">
+
+        <h2>Registrar sesión de fuerza</h2>
+
+        <form id="strengthForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date" id="strengthDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Sesión</label>
+
+                    <select id="strengthType">
+                        <option>Fuerza A</option>
+                        <option>Fuerza B</option>
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+                    <label>RPE global</label>
+
+                    <input type="number"
+                           id="strengthRPE"
+                           min="1"
+                           max="10">
+
+                </div>
+
+                <div class="form-group">
+                    <label>Duración (min)</label>
+
+                    <input type="number"
+                           id="strengthDuration"
+                           min="0">
+
+                </div>
+
+                <div class="form-group full">
+
+                    <label>Notas</label>
+
+                    <textarea id="strengthNotes"
+                              placeholder="Sensaciones, ejercicios modificados, molestias..."></textarea>
+
+                </div>
+
+            </div>
+
+            <div class="actions">
+
+                <button class="btn btn-primary">
+                    Guardar fuerza
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="card">
+
+        <h2>Progresión de fuerza</h2>
+
+        <div class="week">
+
+            <div class="week-header">
+                Semanas 1–3
+            </div>
+
+            <div class="week-body">
+                Fuerza básica + tolerancia a la carga.
+            </div>
+
+        </div>
+
+        <div class="week">
+
+            <div class="week-header">
+                Semanas 4–6
+            </div>
+
+            <div class="week-body">
+                Mayor dificultad unilateral.
+            </div>
+
+        </div>
+
+        <div class="week">
+
+            <div class="week-header">
+                Semanas 7–9
+            </div>
+
+            <div class="week-body">
+                Fuerza + potencia/reactividad progresiva.
+                La pliometría se introduce progresivamente.
+            </div>
+
+        </div>
+
+        <div class="week">
+
+            <div class="week-header">
+                Semanas 10–12
+            </div>
+
+            <div class="week-body">
+                Fuerza mínima efectiva + máxima especificidad de carrera.
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     MOVILIDAD
+===================================================== -->
+
+<section id="movilidad" class="page">
+
+    <div class="page-header">
+        <h1>Movilidad</h1>
+        <p>10–15 minutos · movilidad y recuperación</p>
+    </div>
+
+
+    <div class="grid grid-2">
+
+        <div class="card">
+
+            <h2>Tobillo</h2>
+
+            <div class="exercise-list">
+
+                <div class="exercise">
+                    <div class="exercise-name">Rodilla a la pared</div>
+                    <div class="exercise-meta">2 × 10 / lado</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Sóleo</div>
+                    <div class="exercise-meta">30–40 s / lado</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Gastrocnemio</div>
+                    <div class="exercise-meta">30–40 s / lado</div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Cadera</h2>
+
+            <div class="exercise-list">
+
+                <div class="exercise">
+                    <div class="exercise-name">90/90</div>
+                    <div class="exercise-meta">2 × 6–8 / lado</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Flexor de cadera</div>
+                    <div class="exercise-meta">30–40 s / lado</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Aductores</div>
+                    <div class="exercise-meta">30–40 s</div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Cadena posterior</h2>
+
+            <div class="exercise-list">
+
+                <div class="exercise">
+                    <div class="exercise-name">Isquiotibiales</div>
+                    <div class="exercise-meta">30–40 s / lado</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Glúteo / piriforme</div>
+                    <div class="exercise-meta">30–40 s / lado</div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Columna</h2>
+
+            <div class="exercise-list">
+
+                <div class="exercise">
+                    <div class="exercise-name">Cat-cow</div>
+                    <div class="exercise-meta">8–10 rep</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Rotación torácica</div>
+                    <div class="exercise-meta">8 / lado</div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="card">
+
+        <h2>Sábado · recuperación</h2>
+
+        <p>
+            Movilidad completa + recuperación activa según sensaciones.
+        </p>
+
+        <div class="info">
+            La movilidad debe ayudarte a recuperarte, no convertirse
+            en otra sesión exigente.
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     DIETA
+===================================================== -->
+
+<section id="dieta" class="page">
+
+    <div class="page-header">
+        <h1>Dieta</h1>
+        <p>Definición manteniendo masa muscular</p>
+    </div>
+
+
+    <div class="grid grid-3">
+
+        <div class="card stat">
+
+            <div class="stat-label">
+                Objetivo medio
+            </div>
+
+            <div class="stat-value">
+                2.200
+            </div>
+
+            <div class="stat-small">
+                kcal/día aprox.
+            </div>
+
+        </div>
+
+
+        <div class="card stat">
+
+            <div class="stat-label">
+                Proteína
+            </div>
+
+            <div class="stat-value">
+                180 g
+            </div>
+
+            <div class="stat-small">
+                aprox. / día
+            </div>
+
+        </div>
+
+
+        <div class="card stat">
+
+            <div class="stat-label">
+                Grasas
+            </div>
+
+            <div class="stat-value">
+                65–70 g
+            </div>
+
+            <div class="stat-small">
+                aprox. / día
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="info">
+
+        <strong>Distribución orientativa</strong>
+
+        Días de running: aproximadamente 2.300 kcal.
+        Días sin running: aproximadamente 2.100 kcal.
+        Media semanal aproximada: 2.200 kcal.
+
+    </div>
+
+
+    <div class="grid grid-2">
+
+        <div class="card">
+
+            <h2>Desayuno</h2>
+
+            <div class="exercise-list">
+
+                <div class="exercise">
+                    <div class="exercise-name">Pan integral</div>
+                    <div class="exercise-meta">80 g</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Jamón de pavo</div>
+                    <div class="exercise-meta">80 g</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Queso fresco</div>
+                    <div class="exercise-meta">40 g</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Aceite de oliva</div>
+                    <div class="exercise-meta">10 g</div>
+                </div>
+
+            </div>
+
+            <p class="history-meta">
+                Aproximadamente 430 kcal y 30–35 g de proteína.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Media mañana</h2>
+
+            <div class="exercise-list">
+
+                <div class="exercise">
+                    <div class="exercise-name">Fruta</div>
+                    <div class="exercise-meta">150–200 g</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Yogur proteico</div>
+                    <div class="exercise-meta">1 unidad</div>
+                </div>
+
+            </div>
+
+            <p class="history-meta">
+                Aproximadamente 180–220 kcal.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Comida · opción A</h2>
+
+            <div class="exercise-list">
+
+                <div class="exercise">
+                    <div class="exercise-name">Pechuga de pollo</div>
+                    <div class="exercise-meta">180–200 g en crudo</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Patata</div>
+                    <div class="exercise-meta">300 g</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Aceite de oliva</div>
+                    <div class="exercise-meta">10 g</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Verduras / ensalada</div>
+                    <div class="exercise-meta">Generosa</div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Comida · opción B</h2>
+
+            <div class="exercise-list">
+
+                <div class="exercise">
+                    <div class="exercise-name">Pechuga de pollo</div>
+                    <div class="exercise-meta">180–200 g en crudo</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Arroz</div>
+                    <div class="exercise-meta">80 g en crudo</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Aceite de oliva</div>
+                    <div class="exercise-meta">10 g</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Verduras / ensalada</div>
+                    <div class="exercise-meta">Generosa</div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Merienda · opción A</h2>
+
+            <div class="exercise-list">
+
+                <div class="exercise">
+                    <div class="exercise-name">Yogur proteico</div>
+                    <div class="exercise-meta">1 unidad</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Fruta</div>
+                    <div class="exercise-meta">1 pieza / 150–200 g</div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Merienda · opción B</h2>
+
+            <div class="exercise-list">
+
+                <div class="exercise">
+                    <div class="exercise-name">Tortitas de arroz</div>
+                    <div class="exercise-meta">30 g</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Jamón de pavo</div>
+                    <div class="exercise-meta">60–80 g</div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Cena</h2>
+
+            <div class="exercise-list">
+
+                <div class="exercise">
+                    <div class="exercise-name">Huevos enteros</div>
+                    <div class="exercise-meta">2</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Claras</div>
+                    <div class="exercise-meta">200 g</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Tortilla integral</div>
+                    <div class="exercise-meta">50–60 g</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Verduras</div>
+                    <div class="exercise-meta">200–300 g</div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-name">Aceite de oliva</div>
+                    <div class="exercise-meta">5 g</div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="card">
+
+        <h2>Principios</h2>
+
+        <ul>
+            <li>Objetivo: pérdida de grasa manteniendo masa muscular.</li>
+            <li>La proteína es una prioridad diaria.</li>
+            <li>Los alimentos pueden rotarse manteniendo equivalencias.</li>
+            <li>No es necesario comer exactamente lo mismo todos los días.</li>
+            <li>El seguimiento se basa en tendencias de varias semanas.</li>
+        </ul>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     PROGRESO
+===================================================== -->
+
+<section id="progreso" class="page">
+
+    <div class="page-header">
+
+        <h1>Progreso</h1>
+
+        <p>
+            Medición cada 2 semanas para valorar tendencia.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>Nueva medición</h2>
+
+        <form id="measurementForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date"
+                           id="measurementDate"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>Peso (kg)</label>
+                    <input type="number"
+                           id="weight"
+                           step="0.1"
+                           min="0"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>% grasa</label>
+                    <input type="number"
+                           id="bodyFat"
+                           step="0.1"
+                           min="0"
+                           max="100">
+                </div>
+
+                <div class="form-group">
+                    <label>Altura (cm)</label>
+                    <input type="number"
+                           id="height"
+                           step="0.1">
+                </div>
+
+                <div class="form-group">
+                    <label>Cintura (cm)</label>
+                    <input type="number"
+                           id="waist"
+                           step="0.1">
+                </div>
+
+                <div class="form-group">
+                    <label>Abdomen (cm)</label>
+                    <input type="number"
+                           id="abdomen"
+                           step="0.1">
+                </div>
+
+                <div class="form-group">
+                    <label>Cadera (cm)</label>
+                    <input type="number"
+                           id="hip"
+                           step="0.1">
+                </div>
+
+                <div class="form-group">
+                    <label>Pecho (cm)</label>
+                    <input type="number"
+                           id="chest"
+                           step="0.1">
+                </div>
+
+                <div class="form-group">
+                    <label>Brazo derecho (cm)</label>
+                    <input type="number"
+                           id="rightArm"
+                           step="0.1">
+                </div>
+
+                <div class="form-group">
+                    <label>Brazo izquierdo (cm)</label>
+                    <input type="number"
+                           id="leftArm"
+                           step="0.1">
+                </div>
+
+                <div class="form-group">
+                    <label>Muslo derecho (cm)</label>
+                    <input type="number"
+                           id="rightThigh"
+                           step="0.1">
+                </div>
+
+                <div class="form-group">
+                    <label>Muslo izquierdo (cm)</label>
+                    <input type="number"
+                           id="leftThigh"
+                           step="0.1">
+                </div>
+
+                <div class="form-group full">
+
+                    <label>Notas</label>
+
+                    <textarea id="measurementNotes"
+                              placeholder="Hambre, energía, recuperación, adherencia, cambios visibles..."></textarea>
+
+                </div>
+
+            </div>
+
+
+            <div class="actions">
+
+                <button class="btn btn-primary">
+                    Guardar medición
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="grid grid-3">
+
+        <div class="card stat">
+
+            <div class="stat-label">
+                Cambio de peso
+            </div>
+
+            <div class="stat-value"
+                 id="weightChange">
+                —
+            </div>
+
+            <div class="stat-small">
+                respecto a la medición anterior
+            </div>
+
+        </div>
+
+
+        <div class="card stat">
+
+            <div class="stat-label">
+                Cambio de cintura
+            </div>
+
+            <div class="stat-value"
+                 id="waistChange">
+                —
+            </div>
+
+            <div class="stat-small">
+                respecto a la medición anterior
+            </div>
+
+        </div>
+
+
+        <div class="card stat">
+
+            <div class="stat-label">
+                Mediciones
+            </div>
+
+            <div class="stat-value"
+                 id="measurementCount">
+                0
+            </div>
+
+            <div class="stat-small">
+                registradas
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="card">
+
+        <h2>Revisión cada 2 semanas</h2>
+
+        <div id="reviewDetails">
+
+            Todavía no hay suficientes datos para realizar una revisión.
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     HISTORIAL
+===================================================== -->
+
+<section id="historial" class="page">
+
+    <div class="page-header">
+
+        <h1>Historial</h1>
+
+        <p>
+            Registro de carreras, fuerza y mediciones.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>Entrenamientos</h2>
+
+        <div id="workoutHistory">
+
+            <p class="history-meta">
+                No hay entrenamientos registrados.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="card">
+
+        <h2>Mediciones</h2>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Fecha</th>
+                        <th>Peso</th>
+                        <th>% grasa</th>
+                        <th>Cintura</th>
+                        <th>Abdomen</th>
+                        <th>Notas</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="measurementHistory">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="card">
+
+        <h2>Datos</h2>
+
+        <p class="history-meta">
+            Actualmente los datos se almacenan en este navegador mediante
+            localStorage.
+        </p>
+
+        <div class="actions">
+
+            <button class="btn btn-secondary"
+                    onclick="exportData()">
+                Exportar datos
+            </button>
+
+            <button class="btn btn-danger"
+                    onclick="clearAllData()">
+                Borrar todos los datos
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
 
 </main>
 
 
+<footer>
+
+    AppMyEntreno · Running 12 semanas · Fuerza · Movilidad · Dieta · Progreso
+
+</footer>
+
+</div>
+
+
 <script>
 
-  /* ==========================================
-     TRAINING PLAN
-  ========================================== */
+/* =========================================================
+   CONFIGURACIÓN
+========================================================= */
 
-  const DAYS = [
+/*
+   Cuando conectemos Google Sheets pondremos aquí la URL
+   de Google Apps Script.
 
-    {
-      key: 1,
-      short: "L",
-      name: "Lunes",
-      type: "RUNNING",
-      title: "Rodaje suave",
-      duration: "35–45 min",
+   Ejemplo:
 
-      objective:
-        "Base aeróbica y gasto energético sin acumular fatiga excesiva.",
+   const GOOGLE_SCRIPT_URL =
+   "https://script.google.com/macros/s/XXXXXXXX/exec";
 
-      exercises: [
+*/
 
-        [
-          "Rodaje",
-          "5–7 km · zona 2"
-        ],
+const GOOGLE_SCRIPT_URL = "";
 
-        [
-          "Ritmo orientativo",
-          "6:45–7:15 min/km · ajusta por sensaciones"
-        ],
 
-        [
-          "Final",
-          "Termina con sensación de que podrías seguir 10–15 min"
-        ]
+/* =========================================================
+   STORAGE
+========================================================= */
 
-      ]
-    },
+const STORAGE = {
 
+    workouts: "appmyentreno_workouts_v2",
 
-    {
-      key: 2,
-      short: "M",
-      name: "Martes",
-      type: "FUERZA A",
-      title: "Piernas + core",
-      duration: "25–30 min",
+    measurements: "appmyentreno_measurements_v2"
 
-      objective:
-        "Mantener estímulo de fuerza con mínima demanda sobre el brazo izquierdo.",
+};
 
-      exercises: [
 
-        [
-          "Calentamiento dinámico",
-          "5–7 min · cadera, tobillo y piernas"
-        ],
+/* =========================================================
+   HELPERS
+========================================================= */
 
-        [
-          "Sentadilla / variante segura",
-          "3 × 8–10 · RPE 7"
-        ],
+function getWorkouts(){
 
-        [
-          "Split squat",
-          "3 × 8–10 por pierna"
-        ],
-
-        [
-          "Puente de glúteo",
-          "3 × 12–15"
-        ],
-
-        [
-          "Dead bug",
-          "3 × 8–10 por lado"
-        ],
-
-        [
-          "Plancha modificada",
-          "3 × 30–45 s · solo si no carga el brazo izquierdo"
-        ]
-
-      ]
-    },
-
-
-    {
-      key: 3,
-      short: "X",
-      name: "Miércoles",
-      type: "RUNNING",
-      title: "Rodaje con calidad",
-      duration: "40–50 min",
-
-      objective:
-        "Introducir trabajo controlado de ritmo sin convertirlo en una sesión máxima.",
-
-      exercises: [
-
-        [
-          "Volumen total",
-          "6–8 km"
-        ],
-
-        [
-          "Calentamiento",
-          "10–15 min suave"
-        ],
-
-        [
-          "Bloques",
-          "4 × 5 min a 6:20–6:35 min/km"
-        ],
-
-        [
-          "Recuperación",
-          "2–3 min de trote suave entre bloques"
-        ],
-
-        [
-          "Vuelta a la calma",
-          "8–10 min suave"
-        ]
-
-      ]
-    },
-
-
-    {
-      key: 4,
-      short: "J",
-      name: "Jueves",
-      type: "FUERZA B",
-      title: "Unilateral + estabilidad",
-      duration: "20–25 min",
-
-      objective:
-        "Trabajo de piernas y estabilidad con control técnico.",
-
-      exercises: [
-
-        [
-          "Calentamiento",
-          "5 min · movilidad de cadera y tobillo"
-        ],
-
-        [
-          "Step-up",
-          "3 × 10 por pierna"
-        ],
-
-        [
-          "Zancada atrás",
-          "3 × 8–10 por pierna"
-        ],
-
-        [
-          "Single-leg RDL sin carga",
-          "3 × 8 por pierna"
-        ],
-
-        [
-          "Puente de glúteo unilateral",
-          "3 × 10 por lado"
-        ],
-
-        [
-          "Core anti-rotación",
-          "2–3 series · sin cargar el brazo izquierdo"
-        ]
-
-      ]
-    },
-
-
-    {
-      key: 5,
-      short: "V",
-      name: "Viernes",
-      type: "RUNNING",
-      title: "Rodaje aeróbico",
-      duration: "40–50 min",
-
-      objective:
-        "Acumular volumen aeróbico cómodo y favorecer la recuperación activa.",
-
-      exercises: [
-
-        [
-          "Rodaje",
-          "5–7 km · zona 2"
-        ],
-
-        [
-          "Intensidad",
-          "Cómoda y conversacional"
-        ],
-
-        [
-          "Control",
-          "Sin perseguir ritmo si hay fatiga acumulada"
-        ]
-
-      ]
-    },
-
-
-    {
-      key: 6,
-      short: "S",
-      name: "Sábado",
-      type: "RECUPERACIÓN",
-      title: "Movilidad + recuperación",
-      duration: "10–15 min",
-
-      objective:
-        "Moverte, recuperar y llegar fresco al rodaje largo.",
-
-      exercises: [
-
-        [
-          "Cadera y tobillo",
-          "Movilidad suave"
-        ],
-
-        [
-          "Columna torácica",
-          "Movilidad sin apoyo del brazo izquierdo"
-        ],
-
-        [
-          "Respiración",
-          "3–5 min de respiración tranquila"
-        ],
-
-        [
-          "Regla",
-          "Nada de carga sobre el brazo izquierdo"
-        ]
-
-      ]
-    },
-
-
-    {
-      key: 7,
-      short: "D",
-      name: "Domingo",
-      type: "RUNNING",
-      title: "Rodaje largo suave",
-      duration: "45–65 min",
-
-      objective:
-        "Construir base aeróbica manteniendo una intensidad sostenible.",
-
-      exercises: [
-
-        [
-          "Rodaje",
-          "7–9 km · zona 2"
-        ],
-
-        [
-          "Ritmo orientativo",
-          "6:50–7:20 min/km"
-        ],
-
-        [
-          "Final",
-          "Termina con reserva; no es un test"
-        ]
-
-      ]
-    }
-
-  ];
-
-
-  /* ==========================================
-     LOCAL STORAGE
-  ========================================== */
-
-  const STORAGE_KEY = "mi-entreno-v1";
-
-
-  function mondayOf(date) {
-
-    const d = new Date(date);
-
-    d.setHours(0, 0, 0, 0);
-
-    const day = d.getDay();
-
-    const diff =
-      day === 0
-        ? -6
-        : 1 - day;
-
-    d.setDate(d.getDate() + diff);
-
-    return d;
-  }
-
-
-  function weekId(date = new Date()) {
-
-    return mondayOf(date)
-      .toISOString()
-      .slice(0, 10);
-  }
-
-
-  function loadState() {
-
-    let state;
-
-    try {
-
-      state =
-        JSON.parse(
-          localStorage.getItem(STORAGE_KEY)
-        ) || {};
-
-    } catch {
-
-      state = {};
-
-    }
-
-
-    /*
-      Cuando empieza una nueva semana,
-      reiniciamos únicamente el progreso
-      semanal y las notas de la semana.
-
-      El historial de carreras permanece.
-    */
-
-    if (state.weekId !== weekId()) {
-
-      state.weekId = weekId();
-
-      state.completed = {};
-
-      state.notes = {};
-
-    }
-
-
-    state.completed ||= {};
-    state.notes ||= {};
-    state.runs ||= [];
-
-
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(state)
+    return JSON.parse(
+        localStorage.getItem(STORAGE.workouts) || "[]"
     );
 
-
-    return state;
-  }
+}
 
 
-  let state = loadState();
+function getMeasurements(){
 
-
-  /* ==========================================
-     CURRENT DAY
-  ========================================== */
-
-  const today = new Date();
-
-  const jsDay = today.getDay();
-
-  let selectedDay =
-    jsDay === 0
-      ? 7
-      : jsDay;
-
-
-  /* ==========================================
-     HELPERS
-  ========================================== */
-
-  function formatDate(date) {
-
-    return new Intl.DateTimeFormat(
-      "es-ES",
-      {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-      }
-    ).format(date);
-
-  }
-
-
-  function saveState() {
-
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(state)
+    return JSON.parse(
+        localStorage.getItem(STORAGE.measurements) || "[]"
     );
 
-  }
+}
 
 
-  /* ==========================================
-     WEEK NAVIGATION
-  ========================================== */
+function saveWorkouts(data){
 
-  function renderNav() {
+    localStorage.setItem(
+        STORAGE.workouts,
+        JSON.stringify(data)
+    );
 
-    const nav =
-      document.getElementById("weekNav");
-
-    nav.innerHTML = "";
+}
 
 
-    DAYS.forEach(day => {
+function saveMeasurements(data){
 
-      const btn =
-        document.createElement("button");
+    localStorage.setItem(
+        STORAGE.measurements,
+        JSON.stringify(data)
+    );
 
-
-      btn.className = "day-btn";
-
-
-      if (day.key === selectedDay) {
-
-        btn.classList.add("active");
-
-      }
+}
 
 
-      if (
-        day.key ===
-        (jsDay === 0 ? 7 : jsDay)
-      ) {
+function today(){
 
-        btn.classList.add("today");
+    return new Date()
+        .toISOString()
+        .split("T")[0];
 
-      }
-
-
-      btn.textContent = day.short;
-
-      btn.setAttribute(
-        "aria-label",
-        day.name
-      );
+}
 
 
-      btn.addEventListener(
-        "click",
-        () => {
+function formatDate(date){
 
-          selectedDay = day.key;
+    if(!date) return "—";
 
-          render();
+    const d = new Date(date + "T00:00:00");
 
+    return d.toLocaleDateString(
+        "es-ES",
+        {
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric"
         }
-      );
+    );
+
+}
 
 
-      nav.appendChild(btn);
+function escapeHTML(value){
+
+    if(value === null || value === undefined){
+
+        return "";
+
+    }
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================================================
+   NAVEGACIÓN
+========================================================= */
+
+document
+.querySelectorAll(".nav-btn")
+.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        showPage(
+            button.dataset.page
+        );
 
     });
 
-  }
+});
 
 
-  /* ==========================================
-     SESSION
-  ========================================== */
-
-  function renderSession() {
-
-    const day =
-      DAYS.find(
-        d => d.key === selectedDay
-      );
-
-
-    document.getElementById(
-      "sessionType"
-    ).textContent = day.type;
-
-
-    document.getElementById(
-      "sessionTitle"
-    ).textContent = day.title;
-
-
-    document.getElementById(
-      "sessionDuration"
-    ).textContent = day.duration;
-
-
-    document.getElementById(
-      "sessionObjective"
-    ).textContent = day.objective;
-
-
-    const list =
-      document.getElementById(
-        "exerciseList"
-      );
-
-
-    list.innerHTML = "";
-
-
-    const completed =
-      state.completed[selectedDay] || [];
-
-
-    const exercises =
-      day.exercises;
-
-
-    exercises.forEach(
-      (exercise, index) => {
-
-        const row =
-          document.createElement("div");
-
-
-        row.className =
-          "exercise" +
-          (
-            completed.includes(index)
-              ? " done"
-              : ""
-          );
-
-
-        const check =
-          document.createElement("input");
-
-
-        check.type = "checkbox";
-
-        check.className = "check";
-
-        check.checked =
-          completed.includes(index);
-
-
-        check.addEventListener(
-          "change",
-          () => {
-
-            let arr =
-              state.completed[selectedDay]
-              || [];
-
-
-            if (check.checked) {
-
-              if (!arr.includes(index)) {
-
-                arr.push(index);
-
-              }
-
-            } else {
-
-              arr =
-                arr.filter(
-                  i => i !== index
-                );
-
-            }
-
-
-            state.completed[
-              selectedDay
-            ] = arr;
-
-
-            saveState();
-
-
-            renderSession();
-
-            renderSummary();
-
-          }
-        );
-
-
-        const content =
-          document.createElement("div");
-
-
-        const name =
-          document.createElement("div");
-
-
-        name.className =
-          "exercise-name";
-
-
-        name.textContent =
-          exercise[0];
-
-
-        const detail =
-          document.createElement("div");
-
-
-        detail.className =
-          "exercise-detail";
-
-
-        detail.textContent =
-          exercise[1];
-
-
-        content.appendChild(name);
-
-        content.appendChild(detail);
-
-
-        row.appendChild(check);
-
-        row.appendChild(content);
-
-
-        list.appendChild(row);
-
-      }
-    );
-
-
-    const done =
-      completed.length;
-
-
-    const total =
-      exercises.length;
-
-
-    const percent =
-      total
-        ? Math.round(
-            done / total * 100
-          )
-        : 0;
-
-
-    document.getElementById(
-      "progressText"
-    ).textContent =
-      percent + "%";
-
-
-    document.getElementById(
-      "progressBar"
-    ).style.width =
-      percent + "%";
-
-  }
-
-
-  /* ==========================================
-     RUNNING CARD
-  ========================================== */
-
-  function isRunDay(dayKey) {
-
-    return (
-      DAYS.find(
-        d => d.key === dayKey
-      )?.type === "RUNNING"
-    );
-
-  }
-
-
-  function renderRunningCard() {
+function showPage(pageId){
 
     document
-      .getElementById("runningCard")
-      .classList.toggle(
-        "hidden",
-        !isRunDay(selectedDay)
-      );
+    .querySelectorAll(".page")
+    .forEach(page => {
 
-  }
-
-
-  /* ==========================================
-     WEEKLY RUNS
-  ========================================== */
-
-  function runsThisWeek() {
-
-    const start =
-      mondayOf(new Date()).getTime();
-
-
-    const end =
-      new Date(start);
-
-
-    end.setDate(
-      end.getDate() + 7
-    );
-
-
-    return state.runs.filter(
-      r => {
-
-        const t =
-          new Date(r.date).getTime();
-
-
-        return (
-          t >= start &&
-          t < end.getTime()
-        );
-
-      }
-    );
-
-  }
-
-
-  /* ==========================================
-     SUMMARY
-  ========================================== */
-
-  function renderSummary() {
-
-    const weeklyRuns =
-      runsThisWeek();
-
-
-    const km =
-      weeklyRuns.reduce(
-        (sum, r) =>
-          sum + Number(r.km || 0),
-        0
-      );
-
-
-    const completedDays =
-      Object.values(
-        state.completed
-      ).filter(
-        arr =>
-          Array.isArray(arr) &&
-          arr.length > 0
-      ).length;
-
-
-    document.getElementById(
-      "runCount"
-    ).textContent =
-      weeklyRuns.length;
-
-
-    document.getElementById(
-      "weeklyKm"
-    ).textContent =
-      km.toFixed(1);
-
-
-    document.getElementById(
-      "completedCount"
-    ).textContent =
-      completedDays + "/7";
-
-  }
-
-
-  /* ==========================================
-     RUN HISTORY
-  ========================================== */
-
-  function renderHistory() {
-
-    const box =
-      document.getElementById(
-        "runHistory"
-      );
-
-
-    const runs =
-      [...state.runs]
-        .sort(
-          (a, b) =>
-            new Date(b.date) -
-            new Date(a.date)
-        )
-        .slice(0, 10);
-
-
-    if (!runs.length) {
-
-      box.innerHTML =
-        '<div class="empty">' +
-        'Todavía no hay carreras registradas.' +
-        '</div>';
-
-      return;
-
-    }
-
-
-    box.innerHTML = "";
-
-
-    const list =
-      document.createElement("div");
-
-
-    list.className =
-      "run-list";
-
-
-    runs.forEach(run => {
-
-      const item =
-        document.createElement("div");
-
-
-      item.className =
-        "run-item";
-
-
-      const main =
-        document.createElement("div");
-
-
-      const mainText =
-        document.createElement("div");
-
-
-      mainText.className =
-        "run-main";
-
-
-      mainText.textContent =
-        Number(run.km).toFixed(1) +
-        " km";
-
-
-      const date =
-        document.createElement("div");
-
-
-      date.className =
-        "run-date";
-
-
-      date.textContent =
-        new Intl.DateTimeFormat(
-          "es-ES",
-          {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-          }
-        ).format(
-          new Date(run.date)
-        ) +
-        (
-          run.rpe
-            ? " · RPE " + run.rpe
-            : ""
-        );
-
-
-      main.appendChild(mainText);
-
-      main.appendChild(date);
-
-
-      const metric =
-        document.createElement("div");
-
-
-      metric.className =
-        "run-metric";
-
-
-      metric.textContent =
-        run.pace || "—";
-
-
-      const pace =
-        document.createElement("div");
-
-
-      pace.className =
-        "run-pace";
-
-
-      pace.textContent =
-        "min/km";
-
-
-      metric.appendChild(pace);
-
-
-      item.appendChild(main);
-
-      item.appendChild(metric);
-
-
-      list.appendChild(item);
+        page.classList.remove("active");
 
     });
 
 
-    box.appendChild(list);
+    document
+    .querySelectorAll(".nav-btn")
+    .forEach(button => {
 
-  }
+        button.classList.remove("active");
+
+    });
 
 
-  /* ==========================================
-     NOTES
-  ========================================== */
+    const page =
+        document.getElementById(pageId);
 
-  function renderNote() {
+    if(page){
 
-    const note =
-      state.notes[selectedDay] || "";
+        page.classList.add("active");
+
+    }
+
+
+    const navButton =
+        document.querySelector(
+            `.nav-btn[data-page="${pageId}"]`
+        );
+
+    if(navButton){
+
+        navButton.classList.add("active");
+
+    }
+
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =========================================================
+   FECHAS INICIALES
+========================================================= */
+
+document.getElementById("runDate").value = today();
+
+document.getElementById("strengthDate").value = today();
+
+document.getElementById("measurementDate").value = today();
+
+
+/* =========================================================
+   RUNNING
+========================================================= */
+
+document
+.getElementById("runningForm")
+.addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+
+    const workout = {
+
+        id: Date.now(),
+
+        date:
+            document.getElementById("runDate").value,
+
+        category:
+            "Running",
+
+        week:
+            document.getElementById("runWeek").value,
+
+        type:
+            document.getElementById("runType").value,
+
+        duration:
+            document.getElementById("runDuration").value,
+
+        distance:
+            document.getElementById("runDistance").value,
+
+        pace:
+            document.getElementById("runPace").value,
+
+        heartRate:
+            document.getElementById("runHR").value,
+
+        rpe:
+            document.getElementById("runRPE").value,
+
+        pain:
+            document.getElementById("runPain").value,
+
+        painLocation:
+            document.getElementById("runPainLocation").value,
+
+        recovery:
+            document.getElementById("runRecovery").value,
+
+        notes:
+            document.getElementById("runNotes").value
+
+    };
+
+
+    const workouts = getWorkouts();
+
+    workouts.push(workout);
+
+    saveWorkouts(workouts);
+
+
+    syncToGoogleSheets(
+        "workout",
+        workout
+    );
+
+
+    alert("Carrera guardada.");
+
+    resetRunningForm();
+
+    renderAll();
+
+});
+
+
+function resetRunningForm(){
+
+    document.getElementById("runningForm").reset();
+
+    document.getElementById("runDate").value = today();
+
+    document.getElementById("runPain").value = 0;
+
+}
+
+
+/* =========================================================
+   FUERZA
+========================================================= */
+
+document
+.getElementById("strengthForm")
+.addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+
+    const workout = {
+
+        id: Date.now(),
+
+        date:
+            document.getElementById("strengthDate").value,
+
+        category:
+            "Fuerza",
+
+        type:
+            document.getElementById("strengthType").value,
+
+        duration:
+            document.getElementById("strengthDuration").value,
+
+        rpe:
+            document.getElementById("strengthRPE").value,
+
+        notes:
+            document.getElementById("strengthNotes").value
+
+    };
+
+
+    const workouts = getWorkouts();
+
+    workouts.push(workout);
+
+    saveWorkouts(workouts);
+
+
+    syncToGoogleSheets(
+        "workout",
+        workout
+    );
+
+
+    alert("Sesión de fuerza guardada.");
+
+    document.getElementById("strengthForm").reset();
+
+    document.getElementById("strengthDate").value = today();
+
+    renderAll();
+
+});
+
+
+function selectStrength(type){
+
+    document.getElementById("strengthType").value = type;
+
+    showPage("fuerza");
+
+    document
+    .getElementById("strengthForm")
+    .scrollIntoView({
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =========================================================
+   MEDICIONES
+========================================================= */
+
+document
+.getElementById("measurementForm")
+.addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+
+    const measurement = {
+
+        id: Date.now(),
+
+        date:
+            document.getElementById("measurementDate").value,
+
+        weight:
+            document.getElementById("weight").value,
+
+        bodyFat:
+            document.getElementById("bodyFat").value,
+
+        height:
+            document.getElementById("height").value,
+
+        waist:
+            document.getElementById("waist").value,
+
+        abdomen:
+            document.getElementById("abdomen").value,
+
+        hip:
+            document.getElementById("hip").value,
+
+        chest:
+            document.getElementById("chest").value,
+
+        rightArm:
+            document.getElementById("rightArm").value,
+
+        leftArm:
+            document.getElementById("leftArm").value,
+
+        rightThigh:
+            document.getElementById("rightThigh").value,
+
+        leftThigh:
+            document.getElementById("leftThigh").value,
+
+        notes:
+            document.getElementById("measurementNotes").value
+
+    };
+
+
+    const measurements =
+        getMeasurements();
+
+
+    measurements.push(measurement);
+
+
+    saveMeasurements(
+        measurements
+    );
+
+
+    syncToGoogleSheets(
+        "measurement",
+        measurement
+    );
+
+
+    alert("Medición guardada.");
+
+    document
+    .getElementById("measurementForm")
+    .reset();
+
+    document.getElementById("measurementDate").value = today();
+
+    renderAll();
+
+});
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+function updateDashboard(){
+
+    const measurements =
+        getMeasurements();
+
+    const workouts =
+        getWorkouts();
 
 
     document.getElementById(
-      "sessionNote"
-    ).value = note;
+        "homeWorkouts"
+    ).textContent = workouts.length;
 
-  }
-
-
-  /* ==========================================
-     FULL RENDER
-  ========================================== */
-
-  function render() {
 
     document.getElementById(
-      "todayDate"
+        "measurementCount"
+    ).textContent = measurements.length;
+
+
+    if(measurements.length === 0){
+
+        document.getElementById("homeWeight").textContent = "—";
+
+        document.getElementById("homeBodyFat").textContent = "—";
+
+        document.getElementById("homeWaist").textContent = "—";
+
+        return;
+
+    }
+
+
+    const sorted =
+        [...measurements]
+        .sort(
+            (a,b) =>
+                new Date(a.date) -
+                new Date(b.date)
+        );
+
+
+    const latest =
+        sorted[sorted.length - 1];
+
+
+    document.getElementById(
+        "homeWeight"
     ).textContent =
-      formatDate(today);
+        latest.weight || "—";
 
 
-    renderNav();
-
-    renderSession();
-
-    renderRunningCard();
-
-    renderSummary();
-
-    renderHistory();
-
-    renderNote();
-
-  }
+    document.getElementById(
+        "homeBodyFat"
+    ).textContent =
+        latest.bodyFat
+            ? latest.bodyFat + "%"
+            : "—";
 
 
-  /* ==========================================
-     SAVE RUN
-  ========================================== */
-
-  document
-    .getElementById("saveRun")
-    .addEventListener(
-      "click",
-      () => {
-
-        const kmInput =
-          document.getElementById(
-            "runKm"
-          );
+    document.getElementById(
+        "homeWaist"
+    ).textContent =
+        latest.waist || "—";
 
 
-        const paceInput =
-          document.getElementById(
-            "runPace"
-          );
+    updateChanges(sorted);
+
+    updateReview(sorted, workouts);
+
+}
 
 
-        const rpeInput =
-          document.getElementById(
-            "runRpe"
-          );
+/* =========================================================
+   CAMBIOS
+========================================================= */
+
+function updateChanges(measurements){
+
+    if(measurements.length < 2){
+
+        document.getElementById(
+            "weightChange"
+        ).textContent = "—";
+
+        document.getElementById(
+            "waistChange"
+        ).textContent = "—";
+
+        return;
+
+    }
 
 
-        const message =
-          document.getElementById(
-            "runMessage"
-          );
+    const current =
+        measurements[measurements.length - 1];
+
+    const previous =
+        measurements[measurements.length - 2];
 
 
-        const km =
-          Number(kmInput.value);
+    if(
+        current.weight &&
+        previous.weight
+    ){
+
+        const change =
+            Number(current.weight) -
+            Number(previous.weight);
+
+        document.getElementById(
+            "weightChange"
+        ).textContent =
+            formatSigned(change,1) + " kg";
+
+    }
 
 
-        if (!km || km <= 0) {
+    if(
+        current.waist &&
+        previous.waist
+    ){
 
-          message.textContent =
-            "Introduce una distancia válida.";
+        const change =
+            Number(current.waist) -
+            Number(previous.waist);
 
-          message.classList.remove(
-            "hidden"
-          );
+        document.getElementById(
+            "waistChange"
+        ).textContent =
+            formatSigned(change,1) + " cm";
 
-          return;
+    }
 
-        }
+}
 
 
-        state.runs.push({
+function formatSigned(number, decimals){
 
-          date:
-            new Date().toISOString(),
+    if(Number.isNaN(number)) return "—";
 
-          km:
-            km,
+    return (
+        number > 0 ? "+" : ""
+    ) + number.toFixed(decimals);
 
-          pace:
-            paceInput.value.trim(),
+}
 
-          rpe:
-            rpeInput.value
+
+/* =========================================================
+   REVISIÓN
+========================================================= */
+
+function updateReview(
+    measurements,
+    workouts
+){
+
+    const review =
+        document.getElementById(
+            "reviewDetails"
+        );
+
+    const summary =
+        document.getElementById(
+            "reviewSummary"
+        );
+
+
+    if(measurements.length < 2){
+
+        const text =
+            "Registra al menos dos mediciones para poder comparar tendencias.";
+
+        review.innerHTML =
+            `<p>${text}</p>`;
+
+        summary.innerHTML =
+            `<p>${text}</p>`;
+
+        return;
+
+    }
+
+
+    const current =
+        measurements[measurements.length - 1];
+
+    const previous =
+        measurements[measurements.length - 2];
+
+
+    let html = "";
+
+
+    if(
+        current.weight &&
+        previous.weight
+    ){
+
+        const change =
+            Number(current.weight) -
+            Number(previous.weight);
+
+        html += `
+            <p>
+                <strong>Peso:</strong>
+                ${formatSigned(change,1)} kg
+                respecto a la medición anterior.
+            </p>
+        `;
+
+    }
+
+
+    if(
+        current.waist &&
+        previous.waist
+    ){
+
+        const change =
+            Number(current.waist) -
+            Number(previous.waist);
+
+        html += `
+            <p>
+                <strong>Cintura:</strong>
+                ${formatSigned(change,1)} cm
+                respecto a la medición anterior.
+            </p>
+        `;
+
+    }
+
+
+    const recentDate =
+        new Date(current.date);
+
+
+    const recentWorkouts =
+        workouts.filter(w => {
+
+            const date =
+                new Date(w.date);
+
+            const diff =
+                (
+                    recentDate - date
+                ) /
+                (1000*60*60*24);
+
+            return diff >= 0 && diff <= 14;
 
         });
 
 
-        saveState();
+    html += `
+        <p>
+            <strong>Entrenamientos registrados
+            en los 14 días previos:</strong>
+            ${recentWorkouts.length}
+        </p>
+    `;
 
 
-        kmInput.value = "";
+    html += `
+        <div class="info">
+            La revisión debe valorar conjuntamente peso medio,
+            cintura, abdomen, hambre, energía, recuperación,
+            adherencia y rendimiento. No tomar decisiones por
+            una única medición.
+        </div>
+    `;
 
-        paceInput.value = "";
 
-        rpeInput.value = "";
+    review.innerHTML = html;
+
+    summary.innerHTML = html;
+
+}
 
 
-        message.textContent =
-          "Carrera guardada.";
+/* =========================================================
+   HISTORIAL
+========================================================= */
 
+function renderWorkoutHistory(){
 
-        message.classList.remove(
-          "hidden"
+    const container =
+        document.getElementById(
+            "workoutHistory"
         );
 
 
-        renderSummary();
-
-        renderHistory();
-
-
-        setTimeout(
-          () =>
-            message.classList.add(
-              "hidden"
-            ),
-          1800
+    const workouts =
+        [...getWorkouts()]
+        .sort(
+            (a,b) =>
+                new Date(b.date) -
+                new Date(a.date)
         );
 
-      }
-    );
+
+    if(workouts.length === 0){
+
+        container.innerHTML =
+            `<p class="history-meta">
+                No hay entrenamientos registrados.
+            </p>`;
+
+        return;
+
+    }
 
 
-  /* ==========================================
-     CLEAR RUN HISTORY
-  ========================================== */
+    container.innerHTML =
+        workouts.map(w => {
 
-  document
-    .getElementById("clearHistory")
-    .addEventListener(
-      "click",
-      () => {
-
-        if (!state.runs.length) {
-
-          return;
-
-        }
+            let details = "";
 
 
-        if (
-          confirm(
-            "¿Borrar todo el historial de carrera de este dispositivo?"
-          )
-        ) {
+            if(w.category === "Running"){
 
-          state.runs = [];
+                details = `
+                    <div class="history-meta">
 
-          saveState();
+                        ${escapeHTML(w.type || "")}
 
-          renderSummary();
+                        ${w.distance
+                            ? ` · ${escapeHTML(w.distance)} km`
+                            : ""}
 
-          renderHistory();
+                        ${w.pace
+                            ? ` · ${escapeHTML(w.pace)} min/km`
+                            : ""}
 
-        }
+                        ${w.rpe
+                            ? ` · RPE ${escapeHTML(w.rpe)}`
+                            : ""}
 
-      }
-    );
+                        ${w.pain !== undefined
+                            ? ` · Dolor ${escapeHTML(w.pain)}/10`
+                            : ""}
 
+                    </div>
+                `;
 
-  /* ==========================================
-     SAVE NOTE
-  ========================================== */
+            }else{
 
-  document
-    .getElementById("saveNote")
-    .addEventListener(
-      "click",
-      () => {
+                details = `
+                    <div class="history-meta">
 
-        state.notes[selectedDay] =
-          document.getElementById(
-            "sessionNote"
-          ).value;
+                        ${escapeHTML(w.type || "")}
 
+                        ${w.duration
+                            ? ` · ${escapeHTML(w.duration)} min`
+                            : ""}
 
-        saveState();
+                        ${w.rpe
+                            ? ` · RPE ${escapeHTML(w.rpe)}`
+                            : ""}
 
+                    </div>
+                `;
 
-        const btn =
-          document.getElementById(
-            "saveNote"
-          );
-
-
-        const original =
-          btn.textContent;
+            }
 
 
-        btn.textContent =
-          "Guardado";
+            return `
+
+                <div class="history-item">
+
+                    <div class="history-top">
+
+                        <div>
+
+                            <div class="history-title">
+
+                                ${escapeHTML(
+                                    w.category
+                                )}
+
+                            </div>
+
+                            <div class="history-meta">
+
+                                ${formatDate(w.date)}
+
+                            </div>
+
+                        </div>
+
+                        <span class="badge">
+
+                            ${escapeHTML(
+                                w.category
+                            )}
+
+                        </span>
+
+                    </div>
+
+                    ${details}
+
+                    ${
+                        w.painLocation
+                        ?
+                        `<div class="history-meta">
+                            Molestia: ${escapeHTML(w.painLocation)}
+                        </div>`
+                        :
+                        ""
+                    }
+
+                    ${
+                        w.recovery
+                        ?
+                        `<div class="history-meta">
+                            Recuperación: ${escapeHTML(w.recovery)}
+                        </div>`
+                        :
+                        ""
+                    }
+
+                    ${
+                        w.notes
+                        ?
+                        `<div class="history-notes">
+                            ${escapeHTML(w.notes)}
+                        </div>`
+                        :
+                        ""
+                    }
+
+                </div>
+
+            `;
+
+        })
+        .join("");
+
+}
 
 
-        setTimeout(
-          () =>
-            btn.textContent =
-              original,
-          1200
+function renderMeasurementHistory(){
+
+    const tbody =
+        document.getElementById(
+            "measurementHistory"
         );
 
-      }
+
+    const measurements =
+        [...getMeasurements()]
+        .sort(
+            (a,b) =>
+                new Date(b.date) -
+                new Date(a.date)
+        );
+
+
+    if(measurements.length === 0){
+
+        tbody.innerHTML =
+            `<tr>
+                <td colspan="6">
+                    No hay mediciones registradas.
+                </td>
+            </tr>`;
+
+        return;
+
+    }
+
+
+    tbody.innerHTML =
+        measurements
+        .map(m => `
+
+            <tr>
+
+                <td>
+                    ${formatDate(m.date)}
+                </td>
+
+                <td>
+                    ${escapeHTML(m.weight || "—")}
+                </td>
+
+                <td>
+                    ${
+                        m.bodyFat
+                        ? escapeHTML(m.bodyFat) + "%"
+                        : "—"
+                    }
+                </td>
+
+                <td>
+                    ${escapeHTML(m.waist || "—")}
+                </td>
+
+                <td>
+                    ${escapeHTML(m.abdomen || "—")}
+                </td>
+
+                <td>
+                    ${escapeHTML(m.notes || "")}
+                </td>
+
+            </tr>
+
+        `)
+        .join("");
+
+}
+
+
+/* =========================================================
+   GOOGLE SHEETS
+========================================================= */
+
+async function syncToGoogleSheets(
+    type,
+    data
+){
+
+    if(!GOOGLE_SCRIPT_URL){
+
+        return;
+
+    }
+
+
+    try{
+
+        await fetch(
+            GOOGLE_SCRIPT_URL,
+            {
+
+                method:"POST",
+
+                mode:"no-cors",
+
+                headers:{
+                    "Content-Type":
+                        "text/plain;charset=utf-8"
+                },
+
+                body:JSON.stringify({
+
+                    type:type,
+
+                    data:data
+
+                })
+
+            }
+        );
+
+    }catch(error){
+
+        console.error(
+            "Error sincronizando con Google Sheets:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   EXPORTAR DATOS
+========================================================= */
+
+function exportData(){
+
+    const data = {
+
+        workouts:
+            getWorkouts(),
+
+        measurements:
+            getMeasurements(),
+
+        exportedAt:
+            new Date().toISOString()
+
+    };
+
+
+    const blob =
+        new Blob(
+            [
+                JSON.stringify(
+                    data,
+                    null,
+                    2
+                )
+            ],
+            {
+                type:"application/json"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const a =
+        document.createElement("a");
+
+    a.href = url;
+
+    a.download =
+        "appmyentreno-backup.json";
+
+    a.click();
+
+
+    URL.revokeObjectURL(url);
+
+}
+
+
+/* =========================================================
+   BORRAR DATOS
+========================================================= */
+
+function clearAllData(){
+
+    const confirmed =
+        confirm(
+            "¿Seguro que quieres borrar todos los entrenamientos y mediciones de este navegador?"
+        );
+
+
+    if(!confirmed){
+
+        return;
+
+    }
+
+
+    localStorage.removeItem(
+        STORAGE.workouts
+    );
+
+    localStorage.removeItem(
+        STORAGE.measurements
     );
 
 
-  /* ==========================================
-     AUTO-SAVE NOTES
-  ========================================== */
-
-  document
-    .getElementById("sessionNote")
-    .addEventListener(
-      "input",
-      () => {
-
-        state.notes[selectedDay] =
-          document.getElementById(
-            "sessionNote"
-          ).value;
+    renderAll();
 
 
-        saveState();
-
-      }
+    alert(
+        "Datos locales eliminados."
     );
 
+}
 
-  /* ==========================================
-     START APP
-  ========================================== */
 
-  render();
+/* =========================================================
+   RENDER GENERAL
+========================================================= */
+
+function renderAll(){
+
+    updateDashboard();
+
+    renderWorkoutHistory();
+
+    renderMeasurementHistory();
+
+}
+
+
+/* =========================================================
+   INICIO
+========================================================= */
+
+renderAll();
 
 </script>
 
