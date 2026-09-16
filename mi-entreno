@@ -1,0 +1,2271 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <meta name="theme-color" content="#111827">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mi Entreno">
+
+  <meta name="description"
+        content="Panel personal de entrenamiento y carrera">
+
+  <title>Mi Entreno</title>
+
+  <style>
+
+    :root {
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #111827;
+      --soft: #f9fafb;
+      --success: #166534;
+      --success-bg: #dcfce7;
+      --warning: #92400e;
+      --warning-bg: #fef3c7;
+      --danger: #991b1b;
+      --danger-bg: #fee2e2;
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--bg);
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+      color: var(--text);
+      background: var(--bg);
+
+      min-height: 100vh;
+
+      padding-bottom:
+        calc(28px + env(safe-area-inset-bottom));
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .app {
+      width: min(100%, 720px);
+      margin: 0 auto;
+
+      padding:
+        max(18px, env(safe-area-inset-top))
+        16px
+        24px;
+    }
+
+    header {
+      padding: 8px 2px 16px;
+    }
+
+    .eyebrow {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+
+      margin-bottom: 5px;
+    }
+
+    h1 {
+      margin: 0;
+
+      font-size: 30px;
+      line-height: 1.1;
+      letter-spacing: -.03em;
+    }
+
+    .date {
+      margin-top: 6px;
+
+      color: var(--muted);
+      font-size: 14px;
+
+      text-transform: capitalize;
+    }
+
+    /* -----------------------------
+       WEEK NAVIGATION
+    ----------------------------- */
+
+    .week-nav {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+
+      gap: 7px;
+
+      margin: 4px 0 16px;
+    }
+
+    .day-btn {
+      border: 1px solid var(--line);
+
+      background: var(--card);
+      color: var(--muted);
+
+      border-radius: 13px;
+
+      padding: 9px 3px;
+
+      cursor: pointer;
+
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .day-btn.active {
+      background: var(--accent);
+      color: white;
+
+      border-color: var(--accent);
+    }
+
+    .day-btn.today::after {
+      content: "";
+
+      display: block;
+
+      width: 4px;
+      height: 4px;
+
+      border-radius: 50%;
+
+      background: currentColor;
+
+      margin: 5px auto 0;
+    }
+
+    /* -----------------------------
+       CARDS
+    ----------------------------- */
+
+    .card {
+      background: var(--card);
+
+      border: 1px solid var(--line);
+
+      border-radius: var(--radius);
+
+      padding: 18px;
+
+      margin-bottom: 14px;
+
+      box-shadow:
+        0 2px 10px rgba(17,24,39,.035);
+    }
+
+    .hero {
+      color: white;
+
+      background: #111827;
+
+      border-color: #111827;
+    }
+
+    .hero .muted,
+    .hero .eyebrow {
+      color: #c7ccd5;
+    }
+
+    /* -----------------------------
+       SESSION HEADER
+    ----------------------------- */
+
+    .session-top {
+      display: flex;
+
+      align-items: flex-start;
+
+      justify-content: space-between;
+
+      gap: 12px;
+    }
+
+    .session-type {
+      font-size: 12px;
+
+      font-weight: 800;
+
+      letter-spacing: .07em;
+
+      text-transform: uppercase;
+
+      opacity: .72;
+
+      margin-bottom: 5px;
+    }
+
+    .session-title {
+      font-size: 24px;
+
+      font-weight: 800;
+
+      line-height: 1.15;
+
+      letter-spacing: -.02em;
+    }
+
+    .duration {
+      white-space: nowrap;
+
+      font-size: 13px;
+
+      padding: 7px 9px;
+
+      border-radius: 10px;
+
+      background: rgba(255,255,255,.1);
+    }
+
+    .objective {
+      margin-top: 13px;
+
+      color: #e5e7eb;
+
+      font-size: 14px;
+
+      line-height: 1.45;
+    }
+
+    /* -----------------------------
+       PROGRESS
+    ----------------------------- */
+
+    .progress-wrap {
+      margin-top: 15px;
+    }
+
+    .progress-label {
+      display: flex;
+
+      justify-content: space-between;
+
+      color: #d1d5db;
+
+      font-size: 12px;
+
+      margin-bottom: 7px;
+    }
+
+    .progress-track {
+      height: 7px;
+
+      background: rgba(255,255,255,.15);
+
+      border-radius: 99px;
+
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+
+      width: 0;
+
+      background: white;
+
+      border-radius: inherit;
+
+      transition: width .25s ease;
+    }
+
+    /* -----------------------------
+       TITLES
+    ----------------------------- */
+
+    .section-title {
+      margin: 0 0 12px;
+
+      font-size: 17px;
+
+      font-weight: 800;
+
+      letter-spacing: -.015em;
+    }
+
+    .section-subtitle {
+      color: var(--muted);
+
+      font-size: 13px;
+
+      margin-top: -6px;
+
+      margin-bottom: 13px;
+    }
+
+    /* -----------------------------
+       EXERCISES
+    ----------------------------- */
+
+    .exercise {
+      display: flex;
+
+      align-items: flex-start;
+
+      gap: 12px;
+
+      padding: 12px 0;
+
+      border-bottom: 1px solid var(--line);
+    }
+
+    .exercise:last-child {
+      border-bottom: 0;
+
+      padding-bottom: 2px;
+    }
+
+    .check {
+      appearance: none;
+      -webkit-appearance: none;
+
+      flex: 0 0 24px;
+
+      width: 24px;
+      height: 24px;
+
+      margin: 0;
+
+      border: 1.5px solid #9ca3af;
+
+      border-radius: 7px;
+
+      background: white;
+
+      cursor: pointer;
+
+      position: relative;
+    }
+
+    .check:checked {
+      background: var(--accent);
+
+      border-color: var(--accent);
+    }
+
+    .check:checked::after {
+      content: "✓";
+
+      position: absolute;
+
+      color: white;
+
+      font-size: 16px;
+
+      font-weight: 800;
+
+      left: 4px;
+      top: 0;
+    }
+
+    .exercise.done .exercise-name {
+      text-decoration: line-through;
+
+      color: var(--muted);
+    }
+
+    .exercise-name {
+      font-size: 14px;
+
+      font-weight: 700;
+
+      line-height: 1.35;
+    }
+
+    .exercise-detail {
+      color: var(--muted);
+
+      font-size: 13px;
+
+      line-height: 1.35;
+
+      margin-top: 3px;
+    }
+
+    /* -----------------------------
+       STATS
+    ----------------------------- */
+
+    .stats {
+      display: grid;
+
+      grid-template-columns: repeat(3, 1fr);
+
+      gap: 9px;
+    }
+
+    .stat {
+      background: var(--soft);
+
+      border: 1px solid var(--line);
+
+      border-radius: 14px;
+
+      padding: 13px 10px;
+
+      min-width: 0;
+    }
+
+    .stat-value {
+      font-size: 22px;
+
+      font-weight: 850;
+
+      letter-spacing: -.03em;
+    }
+
+    .stat-label {
+      color: var(--muted);
+
+      font-size: 11px;
+
+      margin-top: 2px;
+
+      line-height: 1.25;
+    }
+
+    /* -----------------------------
+       RUN FORM
+    ----------------------------- */
+
+    .run-grid {
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 10px;
+    }
+
+    label {
+      display: block;
+
+      color: var(--muted);
+
+      font-size: 12px;
+
+      font-weight: 700;
+
+      margin-bottom: 6px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+
+      border: 1px solid var(--line);
+
+      border-radius: 12px;
+
+      background: white;
+
+      color: var(--text);
+
+      padding: 11px 12px;
+
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #6b7280;
+
+      box-shadow:
+        0 0 0 3px rgba(107,128,128,.12);
+    }
+
+    textarea {
+      resize: vertical;
+
+      min-height: 76px;
+    }
+
+    /* -----------------------------
+       BUTTONS
+    ----------------------------- */
+
+    .btn {
+      border: 0;
+
+      border-radius: 12px;
+
+      padding: 11px 14px;
+
+      cursor: pointer;
+
+      font-weight: 800;
+
+      background: var(--accent);
+
+      color: white;
+    }
+
+    .btn.secondary {
+      background: var(--soft);
+
+      color: var(--text);
+
+      border: 1px solid var(--line);
+    }
+
+    .btn.danger {
+      background: var(--danger-bg);
+
+      color: var(--danger);
+    }
+
+    .full {
+      width: 100%;
+
+      margin-top: 10px;
+    }
+
+    /* -----------------------------
+       NOTICES
+    ----------------------------- */
+
+    .notice {
+      border-radius: 14px;
+
+      padding: 13px 14px;
+
+      background: var(--warning-bg);
+
+      color: var(--warning);
+
+      font-size: 13px;
+
+      line-height: 1.45;
+    }
+
+    .notice strong {
+      display: block;
+
+      margin-bottom: 3px;
+    }
+
+    /* -----------------------------
+       RUN HISTORY
+    ----------------------------- */
+
+    .run-list {
+      display: grid;
+
+      gap: 8px;
+
+      margin-top: 12px;
+    }
+
+    .run-item {
+      display: flex;
+
+      justify-content: space-between;
+
+      gap: 12px;
+
+      padding: 11px 12px;
+
+      border-radius: 12px;
+
+      background: var(--soft);
+
+      border: 1px solid var(--line);
+
+      font-size: 13px;
+    }
+
+    .run-main {
+      font-weight: 750;
+    }
+
+    .run-date {
+      color: var(--muted);
+
+      font-size: 11px;
+
+      margin-top: 2px;
+    }
+
+    .run-metric {
+      text-align: right;
+
+      white-space: nowrap;
+
+      font-weight: 800;
+    }
+
+    .run-pace {
+      color: var(--muted);
+
+      font-size: 11px;
+
+      font-weight: 600;
+
+      margin-top: 2px;
+    }
+
+    .empty {
+      color: var(--muted);
+
+      font-size: 13px;
+
+      text-align: center;
+
+      padding: 10px 0 2px;
+    }
+
+    /* -----------------------------
+       FOOTER
+    ----------------------------- */
+
+    .footer {
+      color: var(--muted);
+
+      font-size: 11px;
+
+      text-align: center;
+
+      line-height: 1.45;
+
+      padding: 5px 12px 15px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 380px) {
+
+      .app {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .card {
+        padding: 15px;
+      }
+
+      .session-title {
+        font-size: 21px;
+      }
+
+      .stats {
+        gap: 6px;
+      }
+
+      .stat {
+        padding: 11px 8px;
+      }
+
+      .stat-value {
+        font-size: 19px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+<main class="app">
+
+  <header>
+
+    <div class="eyebrow">
+      Panel personal
+    </div>
+
+    <h1>
+      Mi Entreno
+    </h1>
+
+    <div
+      class="date"
+      id="todayDate">
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       WEEK NAVIGATION
+  ========================== -->
+
+  <nav
+    class="week-nav"
+    id="weekNav"
+    aria-label="Días de la semana">
+  </nav>
+
+
+  <!-- =========================
+       CURRENT SESSION
+  ========================== -->
+
+  <section class="card hero">
+
+    <div class="session-top">
+
+      <div>
+
+        <div
+          class="session-type"
+          id="sessionType">
+        </div>
+
+        <div
+          class="session-title"
+          id="sessionTitle">
+        </div>
+
+      </div>
+
+      <div
+        class="duration"
+        id="sessionDuration">
+      </div>
+
+    </div>
+
+
+    <div
+      class="objective"
+      id="sessionObjective">
+    </div>
+
+
+    <div class="progress-wrap">
+
+      <div class="progress-label">
+
+        <span>
+          Progreso de la sesión
+        </span>
+
+        <span id="progressText">
+          0%
+        </span>
+
+      </div>
+
+      <div class="progress-track">
+
+        <div
+          class="progress-bar"
+          id="progressBar">
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       EXERCISES
+  ========================== -->
+
+  <section class="card">
+
+    <h2 class="section-title">
+      Sesión de hoy
+    </h2>
+
+    <div id="exerciseList">
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       RUNNING
+  ========================== -->
+
+  <section
+    class="card"
+    id="runningCard">
+
+    <h2 class="section-title">
+      Registrar carrera
+    </h2>
+
+    <div class="section-subtitle">
+      Guarda tus datos y consulta después la evolución.
+    </div>
+
+
+    <div class="run-grid">
+
+      <div>
+
+        <label for="runKm">
+          Distancia (km)
+        </label>
+
+        <input
+          id="runKm"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="0.1"
+          placeholder="Ej. 6.2">
+
+      </div>
+
+
+      <div>
+
+        <label for="runPace">
+          Ritmo (min/km)
+        </label>
+
+        <input
+          id="runPace"
+          type="text"
+          inputmode="decimal"
+          placeholder="Ej. 6:45">
+
+      </div>
+
+    </div>
+
+
+    <div style="margin-top:10px">
+
+      <label for="runRpe">
+        RPE
+      </label>
+
+      <select id="runRpe">
+
+        <option value="">
+          Sin registrar
+        </option>
+
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+
+      </select>
+
+    </div>
+
+
+    <button
+      class="btn full"
+      id="saveRun">
+
+      Guardar carrera
+
+    </button>
+
+
+    <div
+      id="runMessage"
+      class="section-subtitle hidden"
+      style="margin:10px 0 0;text-align:center">
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       WEEKLY SUMMARY
+  ========================== -->
+
+  <section class="card">
+
+    <h2 class="section-title">
+      Resumen semanal
+    </h2>
+
+    <div class="stats">
+
+      <div class="stat">
+
+        <div
+          class="stat-value"
+          id="runCount">
+          0
+        </div>
+
+        <div class="stat-label">
+          carreras
+        </div>
+
+      </div>
+
+
+      <div class="stat">
+
+        <div
+          class="stat-value"
+          id="weeklyKm">
+          0.0
+        </div>
+
+        <div class="stat-label">
+          km esta semana
+        </div>
+
+      </div>
+
+
+      <div class="stat">
+
+        <div
+          class="stat-value"
+          id="completedCount">
+          0/7
+        </div>
+
+        <div class="stat-label">
+          días completados
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       CURRENT PHASE RULES
+  ========================== -->
+
+  <section class="card">
+
+    <h2 class="section-title">
+      Reglas de esta fase
+    </h2>
+
+
+    <div class="notice">
+
+      <strong>
+        Protección del brazo izquierdo
+      </strong>
+
+      Mantén la restricción de carga vigente indicada
+      por tu equipo médico. Evita ejercicios que carguen
+      directamente el brazo izquierdo o que generen dolor.
+      Actualiza esta regla cuando cambie tu pauta de
+      rehabilitación.
+
+    </div>
+
+
+    <div style="height:10px">
+    </div>
+
+
+    <div
+      class="notice"
+      style="background:var(--soft);color:var(--text)">
+
+      <strong>
+        Objetivo
+      </strong>
+
+      Priorizar definición y pérdida de grasa manteniendo
+      masa muscular, sin convertir esta fase en una etapa
+      de volumen.
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       RUN HISTORY
+  ========================== -->
+
+  <section class="card">
+
+    <h2 class="section-title">
+      Historial de carrera
+    </h2>
+
+    <div id="runHistory">
+    </div>
+
+    <button
+      class="btn danger full"
+      id="clearHistory">
+
+      Borrar historial
+
+    </button>
+
+  </section>
+
+
+  <!-- =========================
+       SESSION NOTES
+  ========================== -->
+
+  <section class="card">
+
+    <h2 class="section-title">
+      Nota de la sesión
+    </h2>
+
+    <div class="section-subtitle">
+      Se guarda automáticamente en este dispositivo.
+    </div>
+
+    <textarea
+      id="sessionNote"
+      placeholder="Sensaciones, RPE, molestias, sueño, etc.">
+    </textarea>
+
+    <button
+      class="btn secondary full"
+      id="saveNote">
+
+      Guardar nota
+
+    </button>
+
+  </section>
+
+
+  <div class="footer">
+
+    Datos guardados localmente en este dispositivo.
+    Esta página no necesita una cuenta ni un servidor
+    para funcionar.
+
+  </div>
+
+</main>
+
+
+<script>
+
+  /* ==========================================
+     TRAINING PLAN
+  ========================================== */
+
+  const DAYS = [
+
+    {
+      key: 1,
+      short: "L",
+      name: "Lunes",
+      type: "RUNNING",
+      title: "Rodaje suave",
+      duration: "35–45 min",
+
+      objective:
+        "Base aeróbica y gasto energético sin acumular fatiga excesiva.",
+
+      exercises: [
+
+        [
+          "Rodaje",
+          "5–7 km · zona 2"
+        ],
+
+        [
+          "Ritmo orientativo",
+          "6:45–7:15 min/km · ajusta por sensaciones"
+        ],
+
+        [
+          "Final",
+          "Termina con sensación de que podrías seguir 10–15 min"
+        ]
+
+      ]
+    },
+
+
+    {
+      key: 2,
+      short: "M",
+      name: "Martes",
+      type: "FUERZA A",
+      title: "Piernas + core",
+      duration: "25–30 min",
+
+      objective:
+        "Mantener estímulo de fuerza con mínima demanda sobre el brazo izquierdo.",
+
+      exercises: [
+
+        [
+          "Calentamiento dinámico",
+          "5–7 min · cadera, tobillo y piernas"
+        ],
+
+        [
+          "Sentadilla / variante segura",
+          "3 × 8–10 · RPE 7"
+        ],
+
+        [
+          "Split squat",
+          "3 × 8–10 por pierna"
+        ],
+
+        [
+          "Puente de glúteo",
+          "3 × 12–15"
+        ],
+
+        [
+          "Dead bug",
+          "3 × 8–10 por lado"
+        ],
+
+        [
+          "Plancha modificada",
+          "3 × 30–45 s · solo si no carga el brazo izquierdo"
+        ]
+
+      ]
+    },
+
+
+    {
+      key: 3,
+      short: "X",
+      name: "Miércoles",
+      type: "RUNNING",
+      title: "Rodaje con calidad",
+      duration: "40–50 min",
+
+      objective:
+        "Introducir trabajo controlado de ritmo sin convertirlo en una sesión máxima.",
+
+      exercises: [
+
+        [
+          "Volumen total",
+          "6–8 km"
+        ],
+
+        [
+          "Calentamiento",
+          "10–15 min suave"
+        ],
+
+        [
+          "Bloques",
+          "4 × 5 min a 6:20–6:35 min/km"
+        ],
+
+        [
+          "Recuperación",
+          "2–3 min de trote suave entre bloques"
+        ],
+
+        [
+          "Vuelta a la calma",
+          "8–10 min suave"
+        ]
+
+      ]
+    },
+
+
+    {
+      key: 4,
+      short: "J",
+      name: "Jueves",
+      type: "FUERZA B",
+      title: "Unilateral + estabilidad",
+      duration: "20–25 min",
+
+      objective:
+        "Trabajo de piernas y estabilidad con control técnico.",
+
+      exercises: [
+
+        [
+          "Calentamiento",
+          "5 min · movilidad de cadera y tobillo"
+        ],
+
+        [
+          "Step-up",
+          "3 × 10 por pierna"
+        ],
+
+        [
+          "Zancada atrás",
+          "3 × 8–10 por pierna"
+        ],
+
+        [
+          "Single-leg RDL sin carga",
+          "3 × 8 por pierna"
+        ],
+
+        [
+          "Puente de glúteo unilateral",
+          "3 × 10 por lado"
+        ],
+
+        [
+          "Core anti-rotación",
+          "2–3 series · sin cargar el brazo izquierdo"
+        ]
+
+      ]
+    },
+
+
+    {
+      key: 5,
+      short: "V",
+      name: "Viernes",
+      type: "RUNNING",
+      title: "Rodaje aeróbico",
+      duration: "40–50 min",
+
+      objective:
+        "Acumular volumen aeróbico cómodo y favorecer la recuperación activa.",
+
+      exercises: [
+
+        [
+          "Rodaje",
+          "5–7 km · zona 2"
+        ],
+
+        [
+          "Intensidad",
+          "Cómoda y conversacional"
+        ],
+
+        [
+          "Control",
+          "Sin perseguir ritmo si hay fatiga acumulada"
+        ]
+
+      ]
+    },
+
+
+    {
+      key: 6,
+      short: "S",
+      name: "Sábado",
+      type: "RECUPERACIÓN",
+      title: "Movilidad + recuperación",
+      duration: "10–15 min",
+
+      objective:
+        "Moverte, recuperar y llegar fresco al rodaje largo.",
+
+      exercises: [
+
+        [
+          "Cadera y tobillo",
+          "Movilidad suave"
+        ],
+
+        [
+          "Columna torácica",
+          "Movilidad sin apoyo del brazo izquierdo"
+        ],
+
+        [
+          "Respiración",
+          "3–5 min de respiración tranquila"
+        ],
+
+        [
+          "Regla",
+          "Nada de carga sobre el brazo izquierdo"
+        ]
+
+      ]
+    },
+
+
+    {
+      key: 7,
+      short: "D",
+      name: "Domingo",
+      type: "RUNNING",
+      title: "Rodaje largo suave",
+      duration: "45–65 min",
+
+      objective:
+        "Construir base aeróbica manteniendo una intensidad sostenible.",
+
+      exercises: [
+
+        [
+          "Rodaje",
+          "7–9 km · zona 2"
+        ],
+
+        [
+          "Ritmo orientativo",
+          "6:50–7:20 min/km"
+        ],
+
+        [
+          "Final",
+          "Termina con reserva; no es un test"
+        ]
+
+      ]
+    }
+
+  ];
+
+
+  /* ==========================================
+     LOCAL STORAGE
+  ========================================== */
+
+  const STORAGE_KEY = "mi-entreno-v1";
+
+
+  function mondayOf(date) {
+
+    const d = new Date(date);
+
+    d.setHours(0, 0, 0, 0);
+
+    const day = d.getDay();
+
+    const diff =
+      day === 0
+        ? -6
+        : 1 - day;
+
+    d.setDate(d.getDate() + diff);
+
+    return d;
+  }
+
+
+  function weekId(date = new Date()) {
+
+    return mondayOf(date)
+      .toISOString()
+      .slice(0, 10);
+  }
+
+
+  function loadState() {
+
+    let state;
+
+    try {
+
+      state =
+        JSON.parse(
+          localStorage.getItem(STORAGE_KEY)
+        ) || {};
+
+    } catch {
+
+      state = {};
+
+    }
+
+
+    /*
+      Cuando empieza una nueva semana,
+      reiniciamos únicamente el progreso
+      semanal y las notas de la semana.
+
+      El historial de carreras permanece.
+    */
+
+    if (state.weekId !== weekId()) {
+
+      state.weekId = weekId();
+
+      state.completed = {};
+
+      state.notes = {};
+
+    }
+
+
+    state.completed ||= {};
+    state.notes ||= {};
+    state.runs ||= [];
+
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(state)
+    );
+
+
+    return state;
+  }
+
+
+  let state = loadState();
+
+
+  /* ==========================================
+     CURRENT DAY
+  ========================================== */
+
+  const today = new Date();
+
+  const jsDay = today.getDay();
+
+  let selectedDay =
+    jsDay === 0
+      ? 7
+      : jsDay;
+
+
+  /* ==========================================
+     HELPERS
+  ========================================== */
+
+  function formatDate(date) {
+
+    return new Intl.DateTimeFormat(
+      "es-ES",
+      {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      }
+    ).format(date);
+
+  }
+
+
+  function saveState() {
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(state)
+    );
+
+  }
+
+
+  /* ==========================================
+     WEEK NAVIGATION
+  ========================================== */
+
+  function renderNav() {
+
+    const nav =
+      document.getElementById("weekNav");
+
+    nav.innerHTML = "";
+
+
+    DAYS.forEach(day => {
+
+      const btn =
+        document.createElement("button");
+
+
+      btn.className = "day-btn";
+
+
+      if (day.key === selectedDay) {
+
+        btn.classList.add("active");
+
+      }
+
+
+      if (
+        day.key ===
+        (jsDay === 0 ? 7 : jsDay)
+      ) {
+
+        btn.classList.add("today");
+
+      }
+
+
+      btn.textContent = day.short;
+
+      btn.setAttribute(
+        "aria-label",
+        day.name
+      );
+
+
+      btn.addEventListener(
+        "click",
+        () => {
+
+          selectedDay = day.key;
+
+          render();
+
+        }
+      );
+
+
+      nav.appendChild(btn);
+
+    });
+
+  }
+
+
+  /* ==========================================
+     SESSION
+  ========================================== */
+
+  function renderSession() {
+
+    const day =
+      DAYS.find(
+        d => d.key === selectedDay
+      );
+
+
+    document.getElementById(
+      "sessionType"
+    ).textContent = day.type;
+
+
+    document.getElementById(
+      "sessionTitle"
+    ).textContent = day.title;
+
+
+    document.getElementById(
+      "sessionDuration"
+    ).textContent = day.duration;
+
+
+    document.getElementById(
+      "sessionObjective"
+    ).textContent = day.objective;
+
+
+    const list =
+      document.getElementById(
+        "exerciseList"
+      );
+
+
+    list.innerHTML = "";
+
+
+    const completed =
+      state.completed[selectedDay] || [];
+
+
+    const exercises =
+      day.exercises;
+
+
+    exercises.forEach(
+      (exercise, index) => {
+
+        const row =
+          document.createElement("div");
+
+
+        row.className =
+          "exercise" +
+          (
+            completed.includes(index)
+              ? " done"
+              : ""
+          );
+
+
+        const check =
+          document.createElement("input");
+
+
+        check.type = "checkbox";
+
+        check.className = "check";
+
+        check.checked =
+          completed.includes(index);
+
+
+        check.addEventListener(
+          "change",
+          () => {
+
+            let arr =
+              state.completed[selectedDay]
+              || [];
+
+
+            if (check.checked) {
+
+              if (!arr.includes(index)) {
+
+                arr.push(index);
+
+              }
+
+            } else {
+
+              arr =
+                arr.filter(
+                  i => i !== index
+                );
+
+            }
+
+
+            state.completed[
+              selectedDay
+            ] = arr;
+
+
+            saveState();
+
+
+            renderSession();
+
+            renderSummary();
+
+          }
+        );
+
+
+        const content =
+          document.createElement("div");
+
+
+        const name =
+          document.createElement("div");
+
+
+        name.className =
+          "exercise-name";
+
+
+        name.textContent =
+          exercise[0];
+
+
+        const detail =
+          document.createElement("div");
+
+
+        detail.className =
+          "exercise-detail";
+
+
+        detail.textContent =
+          exercise[1];
+
+
+        content.appendChild(name);
+
+        content.appendChild(detail);
+
+
+        row.appendChild(check);
+
+        row.appendChild(content);
+
+
+        list.appendChild(row);
+
+      }
+    );
+
+
+    const done =
+      completed.length;
+
+
+    const total =
+      exercises.length;
+
+
+    const percent =
+      total
+        ? Math.round(
+            done / total * 100
+          )
+        : 0;
+
+
+    document.getElementById(
+      "progressText"
+    ).textContent =
+      percent + "%";
+
+
+    document.getElementById(
+      "progressBar"
+    ).style.width =
+      percent + "%";
+
+  }
+
+
+  /* ==========================================
+     RUNNING CARD
+  ========================================== */
+
+  function isRunDay(dayKey) {
+
+    return (
+      DAYS.find(
+        d => d.key === dayKey
+      )?.type === "RUNNING"
+    );
+
+  }
+
+
+  function renderRunningCard() {
+
+    document
+      .getElementById("runningCard")
+      .classList.toggle(
+        "hidden",
+        !isRunDay(selectedDay)
+      );
+
+  }
+
+
+  /* ==========================================
+     WEEKLY RUNS
+  ========================================== */
+
+  function runsThisWeek() {
+
+    const start =
+      mondayOf(new Date()).getTime();
+
+
+    const end =
+      new Date(start);
+
+
+    end.setDate(
+      end.getDate() + 7
+    );
+
+
+    return state.runs.filter(
+      r => {
+
+        const t =
+          new Date(r.date).getTime();
+
+
+        return (
+          t >= start &&
+          t < end.getTime()
+        );
+
+      }
+    );
+
+  }
+
+
+  /* ==========================================
+     SUMMARY
+  ========================================== */
+
+  function renderSummary() {
+
+    const weeklyRuns =
+      runsThisWeek();
+
+
+    const km =
+      weeklyRuns.reduce(
+        (sum, r) =>
+          sum + Number(r.km || 0),
+        0
+      );
+
+
+    const completedDays =
+      Object.values(
+        state.completed
+      ).filter(
+        arr =>
+          Array.isArray(arr) &&
+          arr.length > 0
+      ).length;
+
+
+    document.getElementById(
+      "runCount"
+    ).textContent =
+      weeklyRuns.length;
+
+
+    document.getElementById(
+      "weeklyKm"
+    ).textContent =
+      km.toFixed(1);
+
+
+    document.getElementById(
+      "completedCount"
+    ).textContent =
+      completedDays + "/7";
+
+  }
+
+
+  /* ==========================================
+     RUN HISTORY
+  ========================================== */
+
+  function renderHistory() {
+
+    const box =
+      document.getElementById(
+        "runHistory"
+      );
+
+
+    const runs =
+      [...state.runs]
+        .sort(
+          (a, b) =>
+            new Date(b.date) -
+            new Date(a.date)
+        )
+        .slice(0, 10);
+
+
+    if (!runs.length) {
+
+      box.innerHTML =
+        '<div class="empty">' +
+        'Todavía no hay carreras registradas.' +
+        '</div>';
+
+      return;
+
+    }
+
+
+    box.innerHTML = "";
+
+
+    const list =
+      document.createElement("div");
+
+
+    list.className =
+      "run-list";
+
+
+    runs.forEach(run => {
+
+      const item =
+        document.createElement("div");
+
+
+      item.className =
+        "run-item";
+
+
+      const main =
+        document.createElement("div");
+
+
+      const mainText =
+        document.createElement("div");
+
+
+      mainText.className =
+        "run-main";
+
+
+      mainText.textContent =
+        Number(run.km).toFixed(1) +
+        " km";
+
+
+      const date =
+        document.createElement("div");
+
+
+      date.className =
+        "run-date";
+
+
+      date.textContent =
+        new Intl.DateTimeFormat(
+          "es-ES",
+          {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+          }
+        ).format(
+          new Date(run.date)
+        ) +
+        (
+          run.rpe
+            ? " · RPE " + run.rpe
+            : ""
+        );
+
+
+      main.appendChild(mainText);
+
+      main.appendChild(date);
+
+
+      const metric =
+        document.createElement("div");
+
+
+      metric.className =
+        "run-metric";
+
+
+      metric.textContent =
+        run.pace || "—";
+
+
+      const pace =
+        document.createElement("div");
+
+
+      pace.className =
+        "run-pace";
+
+
+      pace.textContent =
+        "min/km";
+
+
+      metric.appendChild(pace);
+
+
+      item.appendChild(main);
+
+      item.appendChild(metric);
+
+
+      list.appendChild(item);
+
+    });
+
+
+    box.appendChild(list);
+
+  }
+
+
+  /* ==========================================
+     NOTES
+  ========================================== */
+
+  function renderNote() {
+
+    const note =
+      state.notes[selectedDay] || "";
+
+
+    document.getElementById(
+      "sessionNote"
+    ).value = note;
+
+  }
+
+
+  /* ==========================================
+     FULL RENDER
+  ========================================== */
+
+  function render() {
+
+    document.getElementById(
+      "todayDate"
+    ).textContent =
+      formatDate(today);
+
+
+    renderNav();
+
+    renderSession();
+
+    renderRunningCard();
+
+    renderSummary();
+
+    renderHistory();
+
+    renderNote();
+
+  }
+
+
+  /* ==========================================
+     SAVE RUN
+  ========================================== */
+
+  document
+    .getElementById("saveRun")
+    .addEventListener(
+      "click",
+      () => {
+
+        const kmInput =
+          document.getElementById(
+            "runKm"
+          );
+
+
+        const paceInput =
+          document.getElementById(
+            "runPace"
+          );
+
+
+        const rpeInput =
+          document.getElementById(
+            "runRpe"
+          );
+
+
+        const message =
+          document.getElementById(
+            "runMessage"
+          );
+
+
+        const km =
+          Number(kmInput.value);
+
+
+        if (!km || km <= 0) {
+
+          message.textContent =
+            "Introduce una distancia válida.";
+
+          message.classList.remove(
+            "hidden"
+          );
+
+          return;
+
+        }
+
+
+        state.runs.push({
+
+          date:
+            new Date().toISOString(),
+
+          km:
+            km,
+
+          pace:
+            paceInput.value.trim(),
+
+          rpe:
+            rpeInput.value
+
+        });
+
+
+        saveState();
+
+
+        kmInput.value = "";
+
+        paceInput.value = "";
+
+        rpeInput.value = "";
+
+
+        message.textContent =
+          "Carrera guardada.";
+
+
+        message.classList.remove(
+          "hidden"
+        );
+
+
+        renderSummary();
+
+        renderHistory();
+
+
+        setTimeout(
+          () =>
+            message.classList.add(
+              "hidden"
+            ),
+          1800
+        );
+
+      }
+    );
+
+
+  /* ==========================================
+     CLEAR RUN HISTORY
+  ========================================== */
+
+  document
+    .getElementById("clearHistory")
+    .addEventListener(
+      "click",
+      () => {
+
+        if (!state.runs.length) {
+
+          return;
+
+        }
+
+
+        if (
+          confirm(
+            "¿Borrar todo el historial de carrera de este dispositivo?"
+          )
+        ) {
+
+          state.runs = [];
+
+          saveState();
+
+          renderSummary();
+
+          renderHistory();
+
+        }
+
+      }
+    );
+
+
+  /* ==========================================
+     SAVE NOTE
+  ========================================== */
+
+  document
+    .getElementById("saveNote")
+    .addEventListener(
+      "click",
+      () => {
+
+        state.notes[selectedDay] =
+          document.getElementById(
+            "sessionNote"
+          ).value;
+
+
+        saveState();
+
+
+        const btn =
+          document.getElementById(
+            "saveNote"
+          );
+
+
+        const original =
+          btn.textContent;
+
+
+        btn.textContent =
+          "Guardado";
+
+
+        setTimeout(
+          () =>
+            btn.textContent =
+              original,
+          1200
+        );
+
+      }
+    );
+
+
+  /* ==========================================
+     AUTO-SAVE NOTES
+  ========================================== */
+
+  document
+    .getElementById("sessionNote")
+    .addEventListener(
+      "input",
+      () => {
+
+        state.notes[selectedDay] =
+          document.getElementById(
+            "sessionNote"
+          ).value;
+
+
+        saveState();
+
+      }
+    );
+
+
+  /* ==========================================
+     START APP
+  ========================================== */
+
+  render();
+
+</script>
+
+</body>
+</html>
